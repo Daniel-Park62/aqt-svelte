@@ -70,7 +70,7 @@
     color: #3455a3 ;
   }
   .subm > .cap{
-    padding: 0 1em;
+    padding: 0 2em;
     color : silver ;
     font-weight: bold ;
     font-size: 1.4rem;

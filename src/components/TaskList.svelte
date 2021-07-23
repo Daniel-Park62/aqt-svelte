@@ -1,12 +1,13 @@
 <script>
   import { onMount } from "svelte";
-  import { getLvlnm} from "./Common.svelte";
-  
-  export let tcode = "";
+  import { getLvlnm } from "./Common.svelte" ;
+
+  export let task = "";
+  export let lvl = '';
 
   let promise = Promise.resolve([]);
   onMount(async () => {
-    const res = await fetch( "/dashboard");
+    const res = await fetch( "/bytask");
     promise = await res.json();
   });
 
@@ -16,15 +17,12 @@
   <table class="tcode-status">
     <thead>
       <tr>
-        <th>테스트ID</th>
-        <th>테스트명</th>
-        <th style="width:6em">테스트일자</th>
+        <th>TASK</th>
         <th>단계</th>
-        <th>대상호스트</th>
         <th>서비스수</th>
+        <th>실패서비스</th>
         <th>패킷건수</th>
         <th>성공건수</th>
-        <th>실패건수</th>
         <th>실패서비스</th>
         <th>성공율(%)</th>
         <th>미수행건수</th>
@@ -35,18 +33,15 @@
         <p>...waiting</p>
       {:then rows}
         {#each rows as row}
-          <tr on:click={() => tcode = row.code } >
-            <td>{row.code}</td>
-            <td>{row.desc1}</td>
-            <td>{row.tdate}</td>
-            <td>{getLvlnm[row.lvl]}</td>
-            <td>{row.thost}</td>
+          <tr on:click={() => {task = row.task; lvl = row.lvl ; }} >
+            <td>{row.task}</td>
+            <td>{getLvlnm(row.lvl)}</td>
             <td>{row.svc_cnt}</td>
+            <td>{row.fsvc_cnt}</td>
             <td>{row.data_cnt.toLocaleString("ko-KR")}</td>
             <td>{row.scnt.toLocaleString("ko-KR")}</td>
             <td>{row.fcnt.toLocaleString("ko-KR")}</td>
-            <td>{row.fsvc_cnt}</td>
-            <td>{row.spct.toFixed(2)}</td>
+            <td>{(row.scnt * 100 / (row.scnt+row.fcnt)).toFixed(2) }</td>
             <td>{row.data_cnt - row.scnt - row.fcnt}</td>
           </tr>
         {/each}

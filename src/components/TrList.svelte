@@ -9,7 +9,6 @@ import DetailTr from "./DetailTR.svelte";
 
 const columns = ['ID','송신시간','소요시간','Method','URI','Status','수신크기','수신헤더','TID'];
 
-  const lvlnm = { 0: "Origin", 1: "단위", 2: "통합", 3: "실시간" };
   let vid = 'none';
   let pid ;
   

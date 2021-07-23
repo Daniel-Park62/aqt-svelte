@@ -11,6 +11,7 @@ const { notFound, errorHandler } = require('./middle/errors');
 const aqtdb = require('./db/dbconn') ;
 const dashboard = require('./controllers/dashBoard') ;
 const bytcode = require('./controllers/bytcode') ;
+const bytask = require('./controllers/bytask') ;
 const regapp = require('./controllers/regapp') ;
 const trlist = require('./controllers/trlist') ;
 const tmaster = require('./controllers/tmaster') ;
@@ -25,6 +26,7 @@ app.get('/', (req, res) => {
 
 app.use('/dashboard', dashboard) ;
 app.use('/bytcode', bytcode) ;
+app.use('/bytask', bytask) ;
 app.use('/regapp', regapp) ;
 app.use('/trlist', trlist) ;
 app.use('/tmaster', tmaster) ;

@@ -1,14 +1,15 @@
 <script>
   import { onMount } from "svelte";
-  import TidList from "./TidList.svelte";
+import { getLvlnm } from "./Common.svelte";
+  import TaskList from "./TaskList.svelte";
 
-  let tcode = "";
+  let task, lvl ;
   let dtls = [];
   let promise = Promise.resolve([]);
 
   let sortBy = { col: "svcid", ascending: true };
 
-  $: promise = getDetail(tcode);
+  $: if(task) promise = getDetail(task,lvl);
 
   $: sort = (column) => {
     if (sortBy.col == column) {
@@ -34,8 +35,8 @@
   // onMount(async () => {
   //   promise = getDatas() ;
   //  }) ;
-  async function getDetail(c) {
-    const res = await fetch("/bytcode?tcode=" + c);
+  async function getDetail(t,l) {
+    const res = await fetch("/bytask/" + t + '/' + l);
     dtls = await res.json();
     return dtls;
   }
@@ -43,10 +44,10 @@
 
 <div class="main">
   <div class="dashboard">
-    <TidList bind:tcode />
+    <TaskList bind:task bind:lvl />
   </div>
   <div class="sub-tit">
-    서비스별 현황({tcode})
+    서비스별 현황({task},{getLvlnm(lvl)})
   </div>
   <div class="bottom">
     <table class="tbl-svc">
@@ -59,6 +60,7 @@
           <th on:click={sort("avgt")}>평균시간</th>
           <th on:click={sort("scnt")}>성공건수</th>
           <th on:click={sort("fcnt")}>실패건수</th>
+          <th on:click={sort("tcode")}>테스트ID</th>
         </tr>
       </thead>
       <tbody>
@@ -74,6 +76,7 @@
               <td>{row.avgt}</td>
               <td>{row.scnt.toLocaleString("ko-KR")}</td>
               <td>{row.fcnt.toLocaleString("ko-KR")}</td>
+              <td>{row.tcode}</td>
             </tr>
           {/each}
         {:catch error}

@@ -1,13 +1,14 @@
 <script>
 	import DashBoard from "./components/DashBoard.svelte";
 	import ByTcode from "./components/ByTcode.svelte";
+	import ByTask from "./components/ByTask.svelte";
 	import RegApp from "./components/RegApp.svelte";
 import TrList from "./components/TrList.svelte";
 
 	let mitems = [
 		{ nm: "총괄 현황", url: "dashboard", cnm: DashBoard },
 		{ nm: "테스트별 수행현황", url: "bytcode", cnm: ByTcode },
-		{ nm: "업무별 수행현황", url: "byapp", cnm: DashBoard },
+		{ nm: "업무별 수행현황", url: "bytask", cnm: ByTask },
 		{ nm: "상세수행현황", url: "detail", cnm: DashBoard },
 		{ nm: "수행결과비교", url: "comp", cnm: DashBoard },
 		{ nm: "전문처리현황", url: "view", cnm: DashBoard },
