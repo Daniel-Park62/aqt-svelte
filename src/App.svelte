@@ -19,7 +19,7 @@ import TrList from "./components/TrList.svelte";
 		{ nm: "1. App 등록", url: "regapp", cnm: RegApp },
 		{ nm: "2. 서비스 등록", url: "regsvc", cnm: ByTcode },
 		{ nm: "3. 테스트등록/전문생성", url: "regtcode", cnm: DashBoard },
-		{ nm: "4. 테스트 실행", url: "aqtexec", cnm: DashBoard },
+		{ nm: "4. 테스트 실행", url: "aqtexec", cnm: TrList },
 	];
 
 	let selected = mitems[0];
@@ -60,7 +60,7 @@ import TrList from "./components/TrList.svelte";
 		text-align: center;
 		padding: 0;
 		width: 100%;
-		height:94vh;
+		height:96vh;
 		margin: 0 auto;
 		display: flex;
 	}
@@ -119,6 +119,7 @@ import TrList from "./components/TrList.svelte";
 		text-align: left;
 		color: orangered;
 		text-transform: uppercase;
+		text-shadow: 1px 1px 0px #bdbdbd;
 		font-size: 1.5em;
 		font-weight: 500;
 		padding: 5px;

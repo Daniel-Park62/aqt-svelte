@@ -14,7 +14,7 @@ router.post('/', async function(req, res, next) {
   // console.log(req.body);
   conn.query({dateStrings:true, 
                sql: "	SELECT pkey, cmpid id, tcode tid, o_stime, stime `송신시간`, rtime, elapsed `소요시간`, method, uri, sflag, rcode status, \
-                  rhead `수신헤더`, rlen `수신크기`,  cast(sdata AS CHAR(2000)) sdata, cast(rdata AS CHAR(2000)) rdata , date_format(cdate,'%Y-%m-%d %T') cdate \
+                  rhead `수신헤더`, rlen `수신크기`,  date_format(cdate,'%Y-%m-%d %T') cdate \
                   FROM ttcppacket t  where tcode rlike ? and uri rlike ? " + etcond + " order by o_stime limit ?, ? "
     }, [ req.body.tcode, req.body.uri  , req.body.page * req.body.psize, +(req.body.psize)  ])
     .then( rows => res.json(rows) ) 

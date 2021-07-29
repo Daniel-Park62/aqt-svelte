@@ -1,15 +1,25 @@
 <script>
   import { onMount } from "svelte";
   import { getLvlnm} from "./Common.svelte";
-  
+  import Trtable from "./Trtable.svelte";
+  import Modal,{getModal} from './Modal.svelte';
+
   export let tcode = "";
+  let conds = {
+    tcode: "%",
+    rcode: '',
+    page: 0,
+    psize: 20,
+    cond: "",
+    uri: ""
+  };
 
   let promise = Promise.resolve([]);
   onMount(async () => {
     const res = await fetch( "/dashboard");
     promise = await res.json();
   });
-
+  $: conds.tcode = tcode ;
 </script>
 
 <div class="container">
@@ -35,16 +45,16 @@
         <p>...waiting</p>
       {:then rows}
         {#each rows as row}
-          <tr on:click={() => tcode = row.code } >
+          <tr on:click={() => tcode = row.code } on:dblclick={()=> { conds.page=0;conds.cond = ''; getModal().open()}} >
             <td>{row.code}</td>
             <td>{row.desc1}</td>
             <td>{row.tdate}</td>
-            <td>{getLvlnm[row.lvl]}</td>
+            <td>{getLvlnm(row.lvl)}</td>
             <td>{row.thost}</td>
             <td>{row.svc_cnt}</td>
             <td>{row.data_cnt.toLocaleString("ko-KR")}</td>
             <td>{row.scnt.toLocaleString("ko-KR")}</td>
-            <td>{row.fcnt.toLocaleString("ko-KR")}</td>
+            <td on:dblclick={()=> { conds.page=0;conds.cond = "sflag='2'"; getModal().open()}} >{row.fcnt.toLocaleString("ko-KR")}</td>
             <td>{row.fsvc_cnt}</td>
             <td>{row.spct.toFixed(2)}</td>
             <td>{row.data_cnt - row.scnt - row.fcnt}</td>
@@ -56,6 +66,9 @@
     </tbody>
   </table>
 </div>
+<Modal>
+	<Trtable bind:conds />
+</Modal>
 
 <style>
   /* .title {

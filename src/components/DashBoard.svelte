@@ -1,13 +1,13 @@
 <script>
   import { onMount } from "svelte";
   import TidList from "./TidList.svelte";
+  
   let tcode;
   let svccnt = 999;
   let datas = {svccnt:0, rows:[{lvl:'1'},{lvl:'2'}]};
   onMount(async () => {
     const res = await fetch("http://" + location.host + "/dashboard/summary");
     datas = await res.json();
-    console.log(datas);
   });
 
 </script>
@@ -34,7 +34,7 @@
       </div> 
     </div>
     <div class="subm">
-      <div class="cap">통합테스트</div>
+      <div class="cap" >통합테스트</div>
       <div class="items">
         <div class="item1 item">
           <div>전체누적진척율</div>
