@@ -1,0 +1,89 @@
+<script>
+  import { onMount } from "svelte";
+  import { getLvlnm } from "./Common.svelte" ;
+
+  export let task = "";
+  export let lvl = '';
+
+  let promise = Promise.resolve([]);
+  onMount(async () => {
+    const res = await fetch( "/bytask");
+    promise = await res.json();
+  });
+
+</script>
+
+<div class="container">
+  <table class="tcode-status">
+    <thead>
+      <tr>
+        <th>TASK</th>
+        <th>단계</th>
+        <th>서비스수</th>
+        <th>실패서비스</th>
+        <th>패킷건수</th>
+        <th>성공건수</th>
+        <th>실패서비스</th>
+        <th>성공율(%)</th>
+        <th>미수행건수</th>
+      </tr>
+    </thead>
+    <tbody>
+      {#await promise}
+        <p>...waiting</p>
+      {:then rows}
+        {#each rows as row}
+          <tr on:click={() => {task = row.task; lvl = row.lvl ; }} >
+            <td>{row.task}</td>
+            <td>{getLvlnm(row.lvl)}</td>
+            <td>{row.svc_cnt}</td>
+            <td>{row.fsvc_cnt}</td>
+            <td>{row.data_cnt.toLocaleString("ko-KR")}</td>
+            <td>{row.scnt.toLocaleString("ko-KR")}</td>
+            <td>{row.fcnt.toLocaleString("ko-KR")}</td>
+            <td>{(row.scnt * 100 / (row.scnt+row.fcnt)).toFixed(2) }</td>
+            <td>{row.data_cnt - row.scnt - row.fcnt}</td>
+          </tr>
+        {/each}
+      {:catch error}
+        <p style="color: red">{error.message}</p>
+      {/await}
+    </tbody>
+  </table>
+</div>
+
+<style>
+  /* .title {
+    text-align: justify;
+  } */
+
+  /* .container {
+    height: auto;
+    overflow: auto;
+  } */
+  .tcode-status {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  .tcode-status td,
+  .tcode-status th {
+    border: 1px solid rgb(214, 214, 230);
+    padding: 5px;
+  }
+
+  .tcode-status th {
+    text-align: center;
+    position: sticky;
+    top: 0;
+  }
+
+  /* .tcode-status tr:nth-child(even) {
+    background-color: #f2f2f2;
+  } */
+
+  .tcode-status tr:hover {
+    background-color: #ddd;
+  }
+</style>
