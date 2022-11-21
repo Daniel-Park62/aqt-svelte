@@ -1,12 +1,11 @@
 <script>
-  import { onMount } from "svelte";
 
   export let vid = "none";
   export let pid = 0;
 
   let modal;
-  let cdata ;
-  let odata = {ok: false , display: 'none'};
+  let cdata;
+  let odata = { ok: false, display: "none" };
 
   $: if (modal) modal.style.display = vid;
   $: cdata = getDetail(pid);
@@ -23,9 +22,9 @@
       const err = await res.json();
       window.alert(err.message);
     }
-    odata.ok = false ;
-    if (document.getElementById("odata").style.display == 'block') getOrig(cdata[0].cmpid) ;
-
+    odata.ok = false;
+    if (document.getElementById("odata").style.display == "block")
+      getOrig(cdata[0].cmpid);
   }
 
   async function getPrev(pid) {
@@ -35,8 +34,9 @@
       const err = await res.json();
       window.alert(err.message);
     }
-    odata.ok = false ;
-    if (document.getElementById("odata").style.display == 'block') getOrig(cdata[0].cmpid) ;
+    odata.ok = false;
+    if (document.getElementById("odata").style.display == "block")
+      getOrig(cdata[0].cmpid);
   }
 
   function closedtl() {
@@ -44,32 +44,30 @@
   }
 
   async function viewOrig(pid) {
-    if (odata.display == 'none') {
-      odata.display = 'block' ;
+    if (odata.display == "none") {
+      odata.display = "block";
       getOrig(pid);
     } else {
-      odata.display = 'none' ;
+      odata.display = "none";
     }
-    document.getElementById("odata").style.display = odata.display ;
+    document.getElementById("odata").style.display = odata.display;
   }
 
   async function getOrig(pid) {
-
-    let rows ;
-    if (! odata.ok) {
-      const res = await fetch("/trlist/orig/" + pid + '/');
+    let rows;
+    if (!odata.ok) {
+      const res = await fetch("/trlist/orig/" + pid + "/");
       if (res.ok) rows = await res.json();
       else {
         const err = await res.json();
         window.alert(err.message);
-        return ;
+        return;
       }
-      odata.ok = true ;
+      odata.ok = true;
       for (let row of rows) {
-        odata.row = row ;
+        odata.row = row;
       }
     }
-
   }
 
   window.onclick = function (event) {
@@ -91,85 +89,109 @@
           <nav>
             <button on:click={async () => getNext(rows[0].pkey)}>다음</button>
             <button on:click={async () => getPrev(rows[0].pkey)}>이전</button>
-            <button on:click={async () => { viewOrig(rows[0].cmpid)} }>원본보기</button>
+            <button
+              on:click={async () => {
+                viewOrig(rows[0].cmpid);
+              }}>원본보기</button
+            >
             <button on:click={closedtl}>Close</button>
           </nav>
         </div>
 
-        <div class='data'>
+        <div class="data">
           {#each rows as row}
-        <div class='cdata'>
-        <div class="ny2">
-          <table>
-            <tr>
-              <td class="lbl">테스트ID</td><td>{row.tcode}</td>
-              <td class="lbl">ID</td><td>{row.pkey}</td>
-              <td class="lbl">Source</td><td>{row.srcip + ":" + row.srcport}</td>
-            </tr>
-            <tr>
-              <td class="lbl">송수신</td><td>{row.stime + ' ~ ' + row.rtime.substring(11)}</td>
-              <td class="lbl">소요시간</td><td>{row.svctime}</td>
-              <td class="lbl">Destination</td><td>{row.dstip + ":" + row.dstport}</td>
-            </tr>
-            <!-- <tr>
+            <div class="cdata">
+              <div class="ny2">
+                <table>
+                  <tr>
+                    <td class="lbl">테스트ID</td><td>{row.tcode}</td>
+                    <td class="lbl">ID</td><td>{row.pkey}</td>
+                    <td class="lbl">Source</td><td
+                      >{row.srcip + ":" + row.srcport}</td
+                    >
+                  </tr>
+                  <tr>
+                    <td class="lbl">송수신</td><td
+                      >{row.stime + " ~ " + row.rtime.substring(11)}</td
+                    >
+                    <td class="lbl">소요시간</td><td>{row.svctime}</td>
+                    <td class="lbl">Destination</td><td
+                      >{row.dstip + ":" + row.dstport}</td
+                    >
+                  </tr>
+                  <!-- <tr>
               <td class="lbl">URI</td><td colspan="3">{row.uri}</td>
               <td class="lbl">Method</td><td>{row.method}</td>
               <td class="lbl">작업일시</td><td>{row.cdate}</td>
               <td class="lbl">수신코드</td><td>{row.rcode}</td>
             </tr> -->
-          </table>
+                </table>
+              </div>
+              <div class="ny3">
+                <br /><span
+                  >{"송신데이터 : " + row.slen.toLocaleString("ko-KR")}
+                </span> <br />
+                <textarea readonly rows="8" cols="120">{row.sdata}</textarea>
+              </div>
+              <div class="ny3">
+                <span>수신헤더</span> <br />
+                <textarea readonly rows="8">{row.rhead}</textarea>
+              </div>
+              <div class="ny3">
+                <span>{"수신데이터 : " + row.rlen.toLocaleString("ko-KR")}</span
+                ><br />
+                <textarea readonly rows="8" cols="120">{row.rdata}</textarea>
+              </div>
+            </div>
+          {/each}
+          <div id="odata">
+            {#if odata.ok}
+              <div class="ny2">
+                <table>
+                  <tr>
+                    <td class="lbl">테스트ID</td><td>{odata.row.tcode}</td>
+                    <td class="lbl">ID</td><td>{odata.row.pkey}</td>
+                    <td class="lbl">Source</td><td
+                      >{odata.row.srcip + ":" + odata.row.srcport}</td
+                    >
+                  </tr>
+                  <tr>
+                    <td class="lbl">송수신</td><td
+                      >{odata.row.stime +
+                        " ~ " +
+                        odata.row.rtime.substring(11)}</td
+                    >
+                    <td class="lbl">소요시간</td><td>{odata.row.svctime}</td>
+                    <td class="lbl">Destination</td><td
+                      >{odata.row.dstip + ":" + odata.row.dstport}</td
+                    >
+                  </tr>
+                </table>
+              </div>
+              <div class="ny3">
+                <br /><span
+                  >{"송신데이터 : " + odata.row.slen.toLocaleString("ko-KR")}
+                </span> <br />
+                <textarea readonly rows="8" cols="120"
+                  >{odata.row.sdata}</textarea
+                >
+              </div>
+              <div class="ny3">
+                <span>수신헤더</span> <br />
+                <textarea readonly rows="8">{odata.row.rhead}</textarea>
+              </div>
+              <div class="ny3">
+                <span
+                  >{"수신데이터 : " +
+                    odata.row.rlen.toLocaleString("ko-KR")}</span
+                ><br />
+                <textarea readonly rows="8" cols="120"
+                  >{odata.row.rdata}</textarea
+                >
+              </div>
+            {/if}
+          </div>
         </div>
-        <div class="ny3">
-          <br /><span
-            >{"송신데이터 : " + row.slen.toLocaleString("ko-KR")}
-          </span> <br />
-          <textarea readonly rows="8" cols="120">{row.sdata}</textarea>
-        </div>
-        <div class="ny3">
-          <span>수신헤더</span> <br />
-          <textarea readonly rows="8">{row.rhead}</textarea>
-        </div>
-        <div class="ny3">
-          <span>{"수신데이터 : " + row.rlen.toLocaleString("ko-KR")}</span><br
-          />
-          <textarea readonly rows="8" cols="120">{row.rdata}</textarea>
-        </div>
-      </div>
-      {/each}
-      <div id="odata" >
-        {#if odata.ok }
-        <div class="ny2">
-          <table>
-            <tr>
-              <td class="lbl">테스트ID</td><td>{odata.row.tcode}</td>
-              <td class="lbl">ID</td><td>{odata.row.pkey}</td>
-              <td class="lbl">Source</td><td>{odata.row.srcip + ":" + odata.row.srcport}</td>
-            </tr>
-            <tr>
-              <td class="lbl">송수신</td><td>{odata.row.stime + ' ~ ' + odata.row.rtime.substring(11)}</td>
-              <td class="lbl">소요시간</td><td>{odata.row.svctime}</td>
-              <td class="lbl">Destination</td><td>{odata.row.dstip + ":" + odata.row.dstport}</td>
-            </tr>
-          </table>
-        </div>
-        <div class="ny3">
-          <br /><span
-            >{"송신데이터 : " + odata.row.slen.toLocaleString("ko-KR")}
-          </span> <br />
-          <textarea readonly rows="8" cols="120">{odata.row.sdata}</textarea>
-        </div>
-        <div class="ny3">
-          <span>수신헤더</span> <br />
-          <textarea readonly rows="8">{odata.row.rhead}</textarea>
-        </div>
-        <div class="ny3">
-          <span>{"수신데이터 : " + odata.row.rlen.toLocaleString("ko-KR")}</span><br
-          />
-          <textarea readonly rows="8" cols="120">{odata.row.rdata}</textarea>
-        </div>        
-        {/if}
-      </div>
-      </div>
       {/if}
     {/await}
   </div>
@@ -200,14 +222,15 @@
   }
 
   .data {
-    display: flex ;
+    display: flex;
   }
-  .cdata, #odata{
-    flex: 1 1 0 ;
+  .cdata,
+  #odata {
+    flex: 1 1 0;
   }
   #odata {
     border-left: 2px solid darkblue;
-    display : none;
+    display: none;
   }
   /* .modal-content > div  {
     width : 95%;

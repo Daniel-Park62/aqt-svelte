@@ -1,8 +1,8 @@
 <script>
   import { onMount } from "svelte";
-  import { getComparator, formatDate, formatDateTime } from "../helpers.js";
-import { bind } from "svelte/internal";
-import DetailTr from "./DetailTR.svelte";
+//   import { getComparator, formatDate, formatDateTime } from "../helpers.js";
+// import { bind } from "svelte/internal";
+// import DetailTr from "./DetailTR.svelte";
 import Trtable from "./Trtable.svelte";
 
   let vid = 'none';
@@ -85,7 +85,7 @@ import Trtable from "./Trtable.svelte";
   }
   .tbl {
     flex: 1 1 0;
-    overflow: auto;
+    overflow: hidden;
   }
 
 /* 

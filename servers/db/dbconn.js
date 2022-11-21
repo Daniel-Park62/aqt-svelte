@@ -8,6 +8,7 @@ const pool = mariadb.createPool({
       password: config.password,
       database: config.database,
       connectionLimit: 10,
+      dateStrings : 'date' ,
       bigIntAsNumber: true,
       insertIdAsNumber : true,
       decimalAsNumber : true

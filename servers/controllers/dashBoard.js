@@ -5,17 +5,13 @@ const aqtdb = require('../db/dbconn');
 
 router.get('/', async function (req, res, next) {
   // conn = await aqtdb.getConn();
-  const cdate = new Date() ;
-  console.log(cdate.toLocaleTimeString(),"/dashboard **") ;
-
   aqtdb.query({ dateStrings: true, sql: 'select * from vtrxlist order by lvl desc, tdate desc' })
     .then(rows => res.json(rows) )
     .catch((e) => {  return next(e) });
 });
 
 router.get('/summary', async function (req, res, next) {
-  const cdate = new Date() ;
-  console.log(cdate.toLocaleTimeString(),"/dashboard/Summary **") ;
+
   const result = {
     svccnt: 0, // 서비스 수
     rows: []
