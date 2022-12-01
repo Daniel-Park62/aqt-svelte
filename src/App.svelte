@@ -125,6 +125,7 @@
 		font-size: 1.5em;
 		font-weight: 500;
 		padding: 5px;
+		margin-bottom: 2px ;
 		border: 1px solid rgb(245, 239, 239);
 		border-radius: 6px;
 	}

@@ -1,5 +1,5 @@
 <script>
-  import { onMount, afterUpdate } from "svelte";
+  import { onMount } from "svelte";
   import { getLvlnm} from "./Common.svelte";
   import Trtable from "./Trtable.svelte";
   import Modal,{getModal} from './Modal.svelte';

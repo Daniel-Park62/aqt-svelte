@@ -1,6 +1,6 @@
 <script>
   import { getComparator, formatDate, formatDateTime } from "../helpers.js";
-  import Button from "./Button.svelte";
+
   import DetailTR from "./DetailTR.svelte";
 
   const columns = [
@@ -16,9 +16,6 @@
   ];
   let vid = "none";
   let pid;
-  let pg = 1;
-  let rdata = Promise.resolve([]);
-
   export let conds = {
     tcode: "",
     rcode: "",
@@ -28,18 +25,18 @@
     uri: "",
   };
 
+  let rdata = Promise.resolve([]);
+
   let sortColumn = null;
   let sortDirection = null;
+  let pg = conds.page + 1  ;
 
-  $: if (conds.tcode) {
-    getTRlist(conds);
-  }
-
-  async function getTRlist(conds) {
+  $: if(conds.tcode > ' ' ) { getTRlist();}
+  
+  async function getTRlist() {
+    console.log("entr ...", conds) ;
     if (conds.tcode == undefined) return Promise.resolve([]);
-
-    pg = conds.page + 1;
-    console.log(conds);
+    pg = conds.page + 1  ;
     const res = await fetch("/trlist", {
       method: "POST",
       headers: {
@@ -49,7 +46,7 @@
     });
     if (res.ok) {
       rdata = await res.json();
-      //      console.log("trlist end", rdata) ;
+          //  console.log("trlist end", rdata) ;
     } else {
       rdata = [];
       throw new Error(res);
@@ -100,8 +97,7 @@
 
   {#if rdata.length > conds.page}<button
       on:click={() => {
-        pg++;
-        conds.page = pg - 1;
+        conds.page++ ;
       }}
     >
       Next &gt;</button
@@ -110,8 +106,7 @@
   {#if pg > 1}
     <button
       on:click={() => {
-        pg--;
-        conds.page = pg - 1;
+        conds.page-- ;
       }}
     >
       &lt; Prev
@@ -134,7 +129,7 @@
       {#await rdata}
         <p>...waiting</p>
       {:then rows}
-        {#each rows as row}
+        {#each rows as row (row.id)}
           <tr
             class={row.sflag}
             on:dblclick={() => {

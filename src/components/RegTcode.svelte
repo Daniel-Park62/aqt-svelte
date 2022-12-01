@@ -1,9 +1,11 @@
 <script>
   import { onMount } from "svelte";
   import { getLvlnm, getLvls, getTypenm , getTypes} from "./Common.svelte";
+  import Modal,{getModal} from './Modal.svelte';
+
   let rdata = Promise.resolve([]);
   let tcode ;
-  let selected, answer ;
+  let jobnm = "등록" ;
 
   let lvl, ttype, desc1, cmpCode, tdate, endDate, tdir, tuser, thost, tport, tenv;
   const columns = [
@@ -34,9 +36,9 @@
     tenv = row.tenv ;
   }
 
-  async function addTcode() {
-    const res = await fetch("/tmaster", {
-      method: "POST",
+  function updTcode() {
+    fetch("/tmaster", {
+      method: jobnm === "등록" ? "POST" : "PUT",
       headers: {
         "Content-Type": "application/json",
       },
@@ -53,18 +55,41 @@
         "tenv":tenv,
         "tdir":tdir,
         "tuser":tuser
-      }),
-    });
-    if (res.ok) {
+      })
+    }).then( async (res) => {
       let rmsg = await res.json();
-      alert(rmsg) ;
-    } else {
-      throw new Error(res);
-    }
+      alert("정상 처리되었습니다");
+      getModal().close();
+      getdata();
+    }).catch( (err) => {
+      throw err;
+    });
   }
 
+  function delTcode() {
+    const delcodes = [] ;
+    console.log("del call") ;
+    rdata.forEach(r => { if (r.chk) delcodes.push(r.code) } ) ;
+    console.log("del code:", delcodes) ;
+    fetch("/tmaster", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        "codes" : delcodes
+      })
+    }).then( async (res) => {
+      let rmsg = await res.json();
+      alert("정상 삭제되었습니다");
+      getdata();
+    }).catch( (err) => {
+      throw err;
+    });
+  }
   async function getdata() {
     //    try {
+      document.getElementById('modal').style.width = '50%' ;
     const res = await fetch("/tmaster");
     if (res.status === 200) {
       rdata = await res.json();
@@ -74,12 +99,14 @@
   }
 
   onMount(getdata);
+
 </script>
-<div id="btns">
-  <button>신규등록</button>
-  <button>선택삭제</button>
+<div id="btns" style="display:flex; justify-content: flex-start; ">
+  <button on:click={() => { jobnm = "등록"; getModal().open() }}>신규등록</button>
+  <button on:click={delTcode}>선택삭제</button>
   <button>전문생성</button>
 </div>
+<hr>
 <div class="tmasterList">
   <table>
     <thead>
@@ -100,7 +127,8 @@
             class={row.type}
             on:dblclick={() => {
               copyRow(row) ;
-
+              jobnm = "수정";
+              getModal().open() ;
             }}
           >
             <td><input type="checkbox" bind:checked={row.chk} /></td>
@@ -121,42 +149,53 @@
     </tbody>
   </table>
 </div>
-<div class="mymodal">
-  <form on:submit|preventDefault={addTcode}>
-    <p>테스트코드 등록</p>
+<Modal>
+    <h2>{ jobnm !="등록" ? tcode : ""} 테스트코드 {jobnm}</h2>
     <div class="items">
-      <div class="item in_label">테스트코드:</div><div class="item in_value"><input bind:value={tcode}></div>
-      <div class="item in_label">테스트명:</div><div class="item in_value"><input bind:value={desc1}></div>
-      <div class="item in_label">타입:</div><div class="item in_value">
-        <select bind:value={ttype} >
+      <div class="item in_label">테스트코드:</div><div><input class="item in_value" pattern="[A-Z0-9]{3,6}" bind:value={tcode}></div>
+      <div class="item in_label">테스트명:</div><div ><input class="item in_value" bind:value={desc1}></div>
+      <div class="item in_label">타입:</div><div>
+        <select  class="item in_value" bind:value={ttype} >
           {#each Object.entries(getTypes()) as [key, value], index (key)}
             <option value={key}>{value}</option>
           {/each}
         </select>
       </div>
-      <div class="item in_label">단계:</div><div class="item in_value">
-        <select bind:value={lvl} >
+      <div class="item in_label">단계:</div><div>
+        <select class="item in_value" bind:value={lvl} >
           {#each Object.entries(getLvls()) as [key, value], index (key)}
             <option value={key}>{value}</option>
           {/each}
         </select>
       </div>
-      <div class="item in_label">테스트시작일:</div><div class="item in_value"><input type="date" bind:value={tdate}></div>
-      <div><button>저장</button></div>
+      <div class="item in_label">테스트시작일:</div><div><input class="item in_value" type="date" bind:value={tdate}></div>
+      <div class="item in_label">대상서버:</div><div><input class="item in_value" bind:value={thost}></div>
+      <div class="item in_label">대상Port:</div><div><input class="item in_value" type="number" min="2" max="65535" bind:value={tport}></div>
     </div>
-  </form>
-</div>
+    <hr>
+    <div>
+      <button on:click={updTcode}>저장</button>
+      <button on:click={() => getModal().close() }>닫기</button>
+    </div>
+</Modal>
 <style>
   .items {
-    display:flex;
-    flex-wrap: wrap;
-    width:60% ;
-  }
-  .item {
-    flex: 1 0 40%;
+    display:grid;
+    grid-template-columns: 8rem 1fr;
+    gap: 10px 20px;
+    align-content: start; 
   }
 
-  .mymodal {
-    width:60% ;
+  .item {
+    vertical-align: text-bottom ;
   }
+
+  .in_value {
+    border: 2px solid silver;
+    border-radius: 5px;
+  }
+  .in_label {
+    text-align: end;
+  }
+
 </style>

@@ -45,8 +45,7 @@ router.post('/',async function(req, res, next) {
 
 });
 
-router.put('/:cd',async function(req, res, next) {
-
+router.put('/',async function(req, res, next) {
   let parms = [
     req.body.type,
     req.body.lvl,
@@ -59,14 +58,23 @@ router.put('/:cd',async function(req, res, next) {
     req.body.thost,
     req.body.tport,
     req.body.tenv,
-    req.params.cd,
+    req.body.code
   ] ;
   const qstr = 'UPDATE tmaster SET ' +
 	             ' `type`=?, lvl=?, desc1=?, cmpCode=?, tdate=?, endDate=?, tdir=?, tuser=?, thost=?, tport=?, tenv=? ' +
                ' WHERE CODE = ?';
   aqtdb.query(qstr, parms)
-  .then(r => res.status(201).send(`update ${req.params.cd}`) )
+  .then(r => res.status(201).send({msg: `update ${req.body.code}`}) )
   .catch(e => { return next(e) } ) ;           
+
+});
+
+router.delete('/',async function(req, res, next) {
+  const codes = "('" + req.body.codes.join("', '") + "')" ;
+  console.log(codes) ;
+  const qstr = 'delete from tmaster where code in ' + codes;
+  const result = await aqtdb.query(qstr) ;
+  return res.status(201).send(result)  ;           
 
 });
 
