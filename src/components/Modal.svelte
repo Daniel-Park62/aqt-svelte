@@ -122,6 +122,7 @@ onDestroy(()=>{
 	#modal-content {
 		max-width: calc(100vw - 20px);
 		max-height: 100%;
-		overflow: auto;
+		/* overflow: auto; */
 	}
+
 </style>

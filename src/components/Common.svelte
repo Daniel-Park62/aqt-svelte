@@ -14,29 +14,3 @@
     return lvlnm;
   }
 </script>
-
-<style>
-  tbody tr:nth-child(odd) td {
-    background-color: #fafbff;
-  }
-
-  thead th:first-child {
-    border-top-left-radius: 5px;
-  }
-
-  thead th:last-child {
-    border-top-right-radius: 5px;
-  }
-
-  tbody tr:last-child td:first-child {
-    border-bottom-left-radius: 5px;
-  }
-
-  tbody tr:last-child td:last-child {
-    border-bottom-right-radius: 5px;
-  }
-
-  tbody tr:hover {
-    background-color: #ddd;
-  }
-</style>

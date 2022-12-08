@@ -4,7 +4,15 @@ const aqtdb = require('../db/dbconn') ;
  
 router.get('/tsellist',async function(req, res, next) {
 
-  aqtdb.query("	SELECT code, concat(code,' :',  desc1) name, cmpcode from tmaster ")
+  aqtdb.query("	SELECT code, desc1 name, cmpcode from tmaster ")
+    .then( rows => res.json(rows) ) 
+    .catch((e) => { return next(e) });
+  
+});
+
+router.get('/torglist',async function(req, res, next) {
+
+  aqtdb.query("	SELECT tcode, date_format(o_stime,'%Y/%m/%d') sdate FROM tloaddata GROUP BY tcode ")
     .then( rows => res.json(rows) ) 
     .catch((e) => { return next(e) });
   

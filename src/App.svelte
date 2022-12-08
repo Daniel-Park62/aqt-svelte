@@ -87,7 +87,7 @@
 		background-color: rgb(254, 255, 255);
 		flex: 1 1 0;
 		/* float: right; */
-		overflow: auto;
+		overflow: hidden;
 		display: flex;
 		flex-direction: column;
 		border: 1px outset rgb(238, 238, 238) ;

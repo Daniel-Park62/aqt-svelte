@@ -1,6 +1,5 @@
 <script>
   import { getComparator, formatDate, formatDateTime } from "../helpers.js";
-
   import DetailTR from "./DetailTR.svelte";
 
   const columns = [
@@ -48,7 +47,7 @@
       rdata = await res.json();
           //  console.log("trlist end", rdata) ;
     } else {
-      rdata = [];
+      rdata = Promise.resolve([]);
       throw new Error(res);
     }
   }
@@ -82,7 +81,7 @@
   //  $: conds.page = pg - 1 ;
 </script>
 
-<div class="cond">
+<div class="fitem pgset">
   <span class="number-in">
     Page :<input
       type="number"
@@ -113,8 +112,8 @@
     </button>
   {/if}
 </div>
-<div class="tbl">
-  <table>
+<div class="fitem tbl" >
+  <table style="overflow:scroll">
     <thead>
       <tr>
         {#each columns as column}
@@ -129,7 +128,7 @@
       {#await rdata}
         <p>...waiting</p>
       {:then rows}
-        {#each rows as row (row.id)}
+        {#each rows as row (row.pkey)}
           <tr
             class={row.sflag}
             on:dblclick={() => {
@@ -153,6 +152,7 @@
       {/await}
     </tbody>
   </table>
+
 </div>
 <DetailTR bind:vid bind:pid />
 
@@ -167,11 +167,32 @@
   .uri {
     text-align: left;
   }
-  table {
-    border-collapse: collapse;
-    width: 100%;
-    height: 70%;
+
+  .pgset {
+    display: flex;
+    align-items: baseline;
+  }
+  .pgset * {
+    margin: 2px 4px;
+    padding: 2px 3px;
+    height: 1.7rem;
+  }
+  .pgset button {
+    width: 4em;
+  }
+  .number-in input {
+    max-width: 60px;
+    text-align: right;
+  }
+
+  .tbl {
     overflow: auto;
+    height: 78vh ;
+  }
+  table {
+    border-collapse : collapse;
+    width: 100%;
+    /* height: 100%; */
   }
   thead {
     max-height: 1.2em;
@@ -179,35 +200,27 @@
     top: 0px;
   }
   th {
-    padding-left: 5px;
     max-width: 20%;
+    padding-left: 5px;
     text-align: center;
     border-right: 1px solid #f0f2fa;
   }
 
-  /* th:first-child {
-  left: 0;
-  z-index: 1;
-  border-right: 1px solid #f0f2fa;
-} */
-
   td {
+    max-width: 20%;
     margin: 0;
     padding: 0.5rem;
     vertical-align: top;
     text-align: inherit;
     font-size: 0.9rem;
-    max-width: 20%;
     background-color: #ffffff;
     border-right: 1px solid #f0f2fa;
   }
 
-  /* td:first-child {
-  position: sticky;
-  left: 0;
-  top: auto;
-  border-right: 1px solid #f0f2fa;
-} */
+  td, th {
+    border: 1px solid rgb(214, 214, 230);
+    padding: 5px;
+  }
 
   tbody tr:nth-child(odd) td {
     background-color: #fafbff;
@@ -229,28 +242,8 @@
     border-bottom-right-radius: 5px;
   }
 
-  tbody tr:hover {
+  tbody tr:hover td{
     background-color: #ddd;
   }
-
-  .cond {
-    display: flex;
-    align-items: baseline;
-  }
-  .cond * {
-    margin: 2px 4px;
-    padding: 2px 3px;
-    height: 1.7rem;
-  }
-  .cond button {
-    width: 4em;
-  }
-  .number-in input {
-    max-width: 60px;
-    text-align: right;
-  }
-  .tbl {
-    height: 90%;
-    overflow:auto;
-  }
+ 
 </style>

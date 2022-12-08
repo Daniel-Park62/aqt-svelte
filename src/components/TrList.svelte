@@ -27,7 +27,7 @@ import Trtable from "./Trtable.svelte";
   onMount(async () => {
     const res = await fetch( "/tmaster/tsellist" ) ;
     tcodelist = await res.json(); 
-    tcodelist.push({code:'',name:'ALL'});
+    tcodelist.push({code:'%',name:'ALL'});
     selected = tcodelist[0];
     // promise = Promise.resolve(tcodelist) ;
   });
@@ -35,13 +35,13 @@ import Trtable from "./Trtable.svelte";
 </script>
 
 <div class="main" on:mouseenter={() => vid = 'none' }>
-  <div class="cond">
+  <div class="cond fitem">
     <p>* 테스트ID : </p> 
     <select bind:value={selected} >
         
       {#each tcodelist as tc}
       <option value={tc}>
-        {tc.name}
+        {tc.code + ' : ' + tc.name}
       </option>
       {/each}
     </select>
@@ -51,7 +51,7 @@ import Trtable from "./Trtable.svelte";
     <button on:click={getTRlistm}>조회</button>
 
   </div>
-  <div class="tbl">
+  <div class="fitem">
     <Trtable bind:conds/>
   </div>
 </div>
@@ -83,18 +83,5 @@ import Trtable from "./Trtable.svelte";
     max-width: 70px;
     text-align: right;
   }
-  .tbl {
-    flex: 1 1 0;
-    overflow: hidden;
-  }
-
-/* 
-  svg {
-    width: 1.25rem;
-    height: 1.25rem;
-    margin-right: 0.25rem;
-    fill: rgb(241, 233, 233);
-    flex-shrink: 0;
-  } */
 
 </style>
