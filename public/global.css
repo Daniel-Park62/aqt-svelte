@@ -43,6 +43,7 @@ input, button, select, textarea {
 	box-sizing: border-box;
 	border: 1px solid #ccc;
 	border-radius: 2px;
+	outline: none;
 }
 
 input:disabled {

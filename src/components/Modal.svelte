@@ -15,6 +15,8 @@ let topDiv
 let visible=false
 let prevOnTop
 let closeCallback
+let w = 90;
+let h = 90;
 
 export let id=''
 
@@ -24,12 +26,16 @@ function keyPress(ev){
 }
 
 /**  API **/
-function open(callback){
+function open(callback, wd,he){
 	closeCallback=callback
 	if(visible) return
 	prevOnTop=onTop
 	onTop=topDiv
 	window.addEventListener("keydown",keyPress)
+	let modal = document.getElementById('modal') ;
+
+	if (wd) w = wd ;
+	if (he) h = he ;
 	
 	//this prevents scrolling of the main window on larger screens
 	document.body.style.overflow="hidden" 
@@ -59,7 +65,7 @@ onDestroy(()=>{
 </script>
 
 <div id="topModal" class:visible bind:this={topDiv} on:click={()=>close()}>
-	<div id='modal' on:click|stopPropagation={()=>{}}>
+	<div id='modal' style='--w:{w};--h:{h} ' on:click|stopPropagation={()=>{}}>
 		<svg id="close" on:click={()=> close()} viewBox="0 0 12 12">
 			<circle cx=6 cy=6 r=6 />
 			<line x1=3 y1=3 x2=9 y2=9 />
@@ -87,8 +93,8 @@ onDestroy(()=>{
 	}
 	#modal {
 		position: relative;
-    height: 90%;
-    width : 90%;
+    height: calc(var(--h) * 1%);
+    width : calc(var(--w) * 1%);
 		border-radius: 6px;
 		background: white;
     border: 2px solid #000;

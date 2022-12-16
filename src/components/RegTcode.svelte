@@ -1,13 +1,15 @@
 <script>
-  import { onMount } from "svelte";
+  import { onMount} from "svelte";
   import { getLvlnm, getLvls, getTypenm , getTypes} from "./Common.svelte";
   import Modal,{getModal} from './Modal.svelte';
+  import CopyTr from "./CopyTr.svelte";
 
   let rdata = Promise.resolve([]);
   let tcode ;
   let jobnm = "등록" ;
+  let copytr = "copytr" ;
 
-  let lvl, ttype, desc1, cmpCode, tdate, endDate, tdir, tuser, thost, tport, tenv;
+  let lvl, ttype, desc1, cmpCode ='', tdate, endDate, tdir=null, tuser=null, thost, tport, tenv='';
   const columns = [
     " ",
     "테스트Id",
@@ -19,6 +21,7 @@
     "종료일",
     "대상서버",
     "대상Port",
+    "데이터건수",
   ];
 
   async function copyRow(row) {
@@ -43,7 +46,7 @@
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        "code":tcode,
+        "code":tcode.toUpperCase() ,
         "lvl":lvl,
         "type":ttype,
         "desc1":desc1,
@@ -58,19 +61,45 @@
       })
     }).then( async (res) => {
       let rmsg = await res.json();
-      alert("정상 처리되었습니다");
-      getModal().close();
-      getdata();
+      alert(rmsg.message );
+      if ( res.status < 300 ) {
+        getModal().close();
+        getdata();
+      }
+    }).catch( (err) => {
+      alert("error:"+ err.message);
+    });
+  }
+
+  function eraseTr() {
+    let codes = rdata.filter(r => r.chk ).map( r => r.code ) ;
+
+    // console.log(codes);
+    if (codes.length == 0)  return ;
+    fetch("/tmaster/erasetr", {
+      method: "PUT" ,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        "codes":codes 
+      })
+    }).then( async res => {
+      let rmsg = await res.json();
+      if (res.status < 400) {
+        alert("정상 삭제되었습니다 \n" + Object.entries( rmsg) );
+        getdata();
+      }
     }).catch( (err) => {
       throw err;
     });
   }
 
   function delTcode() {
-    const delcodes = [] ;
-    console.log("del call") ;
-    rdata.forEach(r => { if (r.chk) delcodes.push(r.code) } ) ;
-    console.log("del code:", delcodes) ;
+    const delcodes = rdata.filter(r => r.chk ).map( r => r.code ) ;
+
+    if (delcodes.length == 0)  return ;
+    // console.log("del code:", delcodes) ;
     fetch("/tmaster", {
       method: "DELETE",
       headers: {
@@ -81,15 +110,15 @@
       })
     }).then( async (res) => {
       let rmsg = await res.json();
-      alert("정상 삭제되었습니다");
-      getdata();
+      if (res.status < 400) {
+        alert("정상 삭제되었습니다");
+        getdata();
+      }
     }).catch( (err) => {
       throw err;
     });
   }
   async function getdata() {
-    //    try {
-      document.getElementById('modal').style.width = '50%' ;
     const res = await fetch("/tmaster");
     if (res.status === 200) {
       rdata = await res.json();
@@ -98,13 +127,14 @@
     }
   }
 
-  onMount(getdata);
+  onMount( getdata );
 
 </script>
 <div id="btns" style="display:flex; justify-content: flex-start; ">
-  <button on:click={() => { jobnm = "등록"; getModal().open() }}>신규등록</button>
+  <button on:click={() => { jobnm = "등록", endDate=null, cmpCode=null ; getModal().open(undefined,'50','70') }}>신규등록</button>
   <button on:click={delTcode}>선택삭제</button>
-  <button>전문생성</button>
+  <button on:click={getModal(copytr).open({},'60','60')}>전문생성</button>
+  <button on:click={eraseTr}>전문삭제</button>
 </div>
 <hr>
 <div class="tmasterList">
@@ -128,7 +158,7 @@
             on:dblclick={() => {
               copyRow(row) ;
               jobnm = "수정";
-              getModal().open() ;
+              getModal().open({},'50','70') ;
             }}
           >
             <td><input type="checkbox" bind:checked={row.chk} /></td>
@@ -141,6 +171,7 @@
             <td class="endDate">{row.endDate === null ? "" : row.endDate}</td>
             <td class="thost">{row.thost}</td>
             <td class="tport">{row.tport}</td>
+            <td class="cnt" style="text-align:right">{row.data_cnt.toLocaleString("ko-KR")}</td>
           </tr>
         {/each}
       {:catch err}
@@ -178,6 +209,10 @@
       <button on:click={() => getModal().close() }>닫기</button>
     </div>
 </Modal>
+<Modal bind:id={copytr} >
+  <CopyTr on:click={() => getModal(copytr).close() } />
+</Modal>
+
 <style>
   .items {
     display:grid;

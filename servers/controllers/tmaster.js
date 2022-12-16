@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const aqtdb = require('../db/dbconn') ;
  
-router.get('/tsellist',async function(req, res, next) {
+router.get('/tsellist', function(req, res, next) {
 
   aqtdb.query("	SELECT code, desc1 name, cmpcode from tmaster ")
     .then( rows => res.json(rows) ) 
@@ -10,7 +10,7 @@ router.get('/tsellist',async function(req, res, next) {
   
 });
 
-router.get('/torglist',async function(req, res, next) {
+router.get('/torglist', function(req, res, next) {
 
   aqtdb.query("	SELECT tcode, date_format(o_stime,'%Y/%m/%d') sdate FROM tloaddata GROUP BY tcode ")
     .then( rows => res.json(rows) ) 
@@ -18,15 +18,36 @@ router.get('/torglist',async function(req, res, next) {
   
 });
 
-router.get('/',async function(req, res, next) {
+router.get('/', function(req, res, next) {
   const cond = req.body.cond ? "where " + req.body.cond : "";
   aqtdb.query("	SELECT a.*, 0 as chk from tmaster a " + cond)
     .then( rows => res.json(rows) ) 
     .catch((e) => { return next(e) });
 });
 
+router.post('/copyTr', function(req, res, next) {
+  let parms = [
+    req.body.srccode,
+    req.body.dstcode,
+    (req.body.uri > '' ? "uri rlike '" + req.body.uri + "' and "  : '')  + req.body.cond,
+    req.body.cnt
+  ] ;
+  // console.log(parms) ;
+  const qstr = 'call sp_loaddata2(?,?,?,?) ' ;
+  aqtdb.query(qstr, parms) 
+    .then(r => {
+      // console.log("ok:",r[0]) ;
+      res.status(201).send(r[0] );
+    })
+    .catch( e => {
+      console.error("error:",e) ;
+      next(e);
+    }) 
+    ;           
+
+});
+
 router.post('/',async function(req, res, next) {
-  console.log(req) ;
   const row = await aqtdb.query("	SELECT count(1) cnt from tmaster where code = ?",[req.body.code]) ;
   if (row[0].cnt > 0 ) {
     return res.status(406).send('** already exists code') ;
@@ -48,12 +69,13 @@ router.post('/',async function(req, res, next) {
   const qstr = 'INSERT INTO tmaster ' +
 	             ' (code, `type`, lvl, desc1, cmpCode, tdate, endDate, tdir, tuser, thost, tport, tenv) ' +
                'VALUES (?, ?, ?, ?, ?,?,?,?, ?,?,?,? ) ' ;
-  const result = await aqtdb.query(qstr, parms) ;
-  return res.status(201).send(result)  ;           
+  aqtdb.query(qstr, parms)
+  .then(r => res.status(201).send({message: `${req.body.code}` + " 등록되었습니다."}) )
+  .catch(e => { next( new Error(e.message) ) } ) ;           
 
 });
 
-router.put('/',async function(req, res, next) {
+router.put('/',function(req, res, next) {
   let parms = [
     req.body.type,
     req.body.lvl,
@@ -72,17 +94,27 @@ router.put('/',async function(req, res, next) {
 	             ' `type`=?, lvl=?, desc1=?, cmpCode=?, tdate=?, endDate=?, tdir=?, tuser=?, thost=?, tport=?, tenv=? ' +
                ' WHERE CODE = ?';
   aqtdb.query(qstr, parms)
-  .then(r => res.status(201).send({msg: `update ${req.body.code}`}) )
-  .catch(e => { return next(e) } ) ;           
+  .then(r => res.status(201).send({message: `${req.body.code}` + " 수정되었습니다."}) )
+  .catch(e => { next( new Error(e.message) ) } ) ;           
 
 });
 
-router.delete('/',async function(req, res, next) {
+router.delete('/',function(req, res, next) {
   const codes = "('" + req.body.codes.join("', '") + "')" ;
   console.log(codes) ;
-  const qstr = 'delete from tmaster where code in ' + codes;
-  const result = await aqtdb.query(qstr) ;
-  return res.status(201).send(result)  ;           
+  const qstr = 'delete from tmaster where code in (?)' ; // + codes;
+  aqtdb.query(qstr, [req.body.codes]) 
+  .then(r => res.status(201).send(r))
+  .catch(e => next(new Error(e.message))) ;
+
+});
+router.put('/erasetr',function(req, res, next) {
+  const codes = "('" + req.body.codes.join("', '") + "')" ;
+
+  const qstr = 'delete from ttcppacket where tcode in (?)' 
+  aqtdb.query(qstr, [req.body.codes])
+  .then(r => res.status(201).send(r))
+  .catch(e => next(new Error(e.message))) ;
 
 });
 
