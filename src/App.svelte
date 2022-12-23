@@ -5,6 +5,7 @@
 	import RegApp from "./components/RegApp.svelte";
 	import RegTcode from "./components/RegTcode.svelte";
   import TrList from "./components/TrList.svelte";
+	import TexecJob from "./components/TexecJob.svelte";
 
 	let mitems = [
 		{ nm: "총괄 현황", url: "dashboard", cnm: DashBoard },
@@ -20,7 +21,7 @@
 		{ nm: "1. App 등록", url: "regapp", cnm: RegApp },
 		{ nm: "2. 서비스 등록", url: "regsvc", cnm: ByTcode },
 		{ nm: "3. 테스트등록/전문생성", url: "regtcode", cnm: RegTcode },
-		{ nm: "4. 테스트 실행", url: "aqtexec", cnm: TrList },
+		{ nm: "4. 테스트 실행", url: "texecjob", cnm: TexecJob },
 	];
 
 	let selected = mitems[0];

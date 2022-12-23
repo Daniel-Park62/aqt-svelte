@@ -92,7 +92,7 @@
   }
 
   .in_value {
-    border: 2px solid silver;
+    border: 1px solid silver;
     border-radius: 5px;
   }
   .in_label {

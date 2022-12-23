@@ -15,6 +15,7 @@ const bytask = require('./controllers/bytask') ;
 const regapp = require('./controllers/regapp') ;
 const trlist = require('./controllers/trlist') ;
 const tmaster = require('./controllers/tmaster') ;
+const texecjob = require('./controllers/texecjob') ;
 
 app.use(cors());
 
@@ -30,6 +31,7 @@ app.use('/bytask', bytask) ;
 app.use('/regapp', regapp) ;
 app.use('/trlist', trlist) ;
 app.use('/tmaster', tmaster) ;
+app.use('/texecjob', texecjob) ;
 
 app.listen(port, () => {
    console.log(`Server is up at port ${port}`);
