@@ -137,9 +137,9 @@
             }}
           >
             <td class="cmpid"><strong><em>{row.id}</em></strong></td>
-            <td class="stime">{row.송신시간.substring(5, 21)}</td>
+            <td class="stime">{row.송신시간.substring(5)}</td>
             <td class="elapsed">{Math.round(row.소요시간 * 1000) / 1000}</td>
-            <td class="methos">{row.method === null ? '': row.method}</td>
+            <td class="method">{row.method === null ? '': row.method}</td>
             <td class="uri">{row.uri}</td>
             <td class="rcode">{row.status}</td>
             <td class="rlen">{row.수신크기.toLocaleString("ko-KR")}</td>
@@ -157,11 +157,14 @@
 <DetailTR bind:vid bind:pid />
 
 <style>
-  .elapsed {
-    min-width: 5em;
+  .elapsed, .rlen, .rcode, .method, .tcode {
+    width: 5em;
   }
-  .stime {
-    min-width: 8em;
+  .cmpid {
+    width: 8em;
+  }
+  .stime  {
+    width: 12em;
   }
   .rhead,
   .uri {
@@ -211,7 +214,7 @@
     margin: 0;
     padding: 0.5rem;
     vertical-align: top;
-    text-align: inherit;
+    text-align: center;
     font-size: 0.9rem;
     background-color: #ffffff;
     border-right: 1px solid #f0f2fa;

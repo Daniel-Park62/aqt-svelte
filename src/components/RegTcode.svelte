@@ -255,9 +255,9 @@ th {
 	color: var(--th_color);
 }
 
-tbody tr:nth-child(odd) td {
+/* tbody tr:nth-child(odd) td {
 	background-color: #fafbff;
-}
+} */
 
 thead th:first-child {
 	border-top-left-radius: 5px;
