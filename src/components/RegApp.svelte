@@ -1,6 +1,5 @@
 <script>
   import { onMount } from "svelte";
-  import { is_empty } from "svelte/internal";
 
   let columns = ["APPID", "APP명", "담당자"];
   let columns_dtl = ["APPID", "Host IP", "0"];
@@ -166,5 +165,9 @@
 
   tr td:focus {
     background: #eee;
+  }
+
+  [contenteditable] {
+    outline-style: none;
   }
 </style>

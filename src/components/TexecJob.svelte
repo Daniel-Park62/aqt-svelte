@@ -58,10 +58,7 @@
       exectype,
       resultstat,
       reqnum,
-      repnum,
-      startDt,
-      endDt,
-      msg,
+      repnum
     } = curRow;
     resultstat = 0;
 
@@ -84,10 +81,7 @@
         exectype,
         resultstat,
         reqnum,
-        repnum,
-        startDt,
-        endDt,
-        msg,
+        repnum
       }),
     })
       .then(async (res) => {
@@ -188,11 +182,10 @@
           {#each rows as row (row.pkey)}
             {#if qselected == 4 || qselected == row.resultstat}
               <tr
-                class={row.resultstat}
+                class={"s"+row.resultstat}
                 on:click={() => {
                   if (curRow.pkey) {
                     const ii = rdata.findIndex(a => a.pkey == curRow.pkey) ;
-                    console.log(ii) ;
                     rdata[ii] = curRow ;
                   }
                   curRow = row;
@@ -206,8 +199,8 @@
                 <td class="tnum">{row.tnum}</td>
                 <td class="reqstartDt">{row.reqstartDt}</td>
                 <td class="resultstat">{statusnm[row.resultstat]}</td>
-                <td class="startDt">{row.startDt}</td>
-                <td class="endDt">{row.endDt}</td>
+                <td class="startDt">{row.startDt === null ? "" :row.startDt}</td>
+                <td class="endDt">{row.endDt === null ? "" : row.endDt }</td>
                 <td class="msg" style="width:150px">{row.msg ? row.msg.split("\n")[0] : ""}</td>
                 {#if (curRow === row)}
                 <td>◀</td>
@@ -231,7 +224,7 @@
         if ( ! (curRow = rdata.find(a => a.pkey == 0)) ) {
         curRow = {
           pkey: 0,
-          tcode: "",
+          tcode: tcodelist.sort((a,b) => a.enddate > b.enddate)[0].code ,
           tdesc: "",
           resultstat: 0,
           jobkind: 9,
@@ -263,7 +256,7 @@
           bind:value={curRow.tcode}
         /> -->
     <select class="item in_value" bind:value={curRow.tcode}>
-      {#each tcodelist as t}
+      {#each tcodelist.filter(a => a.enddate === null) as t}
         <option value={t.code}>{t.code + " : " + t.name}</option>
       {/each}
     </select>
@@ -398,7 +391,7 @@
   .in_value:not(textarea) {
     border: 1px solid silver;
     border-radius: 5px;
-    height: 2em;
+    height: 2.2em;
   }
   .in_label {
     text-align: end;
@@ -434,6 +427,13 @@
     top: 0;
   }
 
+  .s0 {
+    color :blue ;
+  }
+  .s1 {
+    color :red ;
+    font-weight: bold;
+  }
   /* tbody tr:nth-child(odd) td {
     background-color: #fafbff;
   } */

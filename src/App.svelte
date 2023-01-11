@@ -32,6 +32,8 @@
 </script>
 
 <main class="container">
+		<input class="column" type="checkbox" name="" id="checkbtn"/>
+		<label for="checkbtn">》</label>
 		<div class="column menu">
 			<img src="/images/Logo.png" alt="" />
 			<p />
@@ -80,6 +82,13 @@
 		text-align: left;
 	}
 
+	#checkbtn {
+		display: none;
+	}
+
+	#checkbtn:checked ~ .menu {
+		display: none;
+	}
 	.right {
 		/* width: 80%; */
 		/* height: 92vh; */

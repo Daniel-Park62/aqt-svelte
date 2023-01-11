@@ -27,7 +27,7 @@ router.post('/',async function(req, res, next) {
 router.put('/',function(req, res, next) {
   const qstr = `UPDATE texecjob SET 
 	              tcode=?, tdesc=?, tnum=?, dbskip=?, etc=?, in_file=?, reqstartDt=?, exectype=?, 
-                resultstat=?, reqnum=?, repnum=? , startDt=null, endDt=null,
+                resultstat=?, reqnum=?, repnum=? , startDt=null, endDt=null ,msg=''
                 WHERE pkey = ?`;
   aqtdb.query(qstr, [
     req.body.tcode, req.body.tdesc, req.body.tnum, 
@@ -35,7 +35,7 @@ router.put('/',function(req, res, next) {
     req.body.exectype, req.body.resultstat, req.body.reqnum, req.body.repnum,
     req.body.pkey
   ])
-  .then(r => res.status(201).send({message: `${req.body.code}` + " 수정되었습니다."}) )
+  .then(r => res.status(201).send({message: `${req.body.tcode}` + " 수정되었습니다."}) )
   .catch(e => { next( new Error(e.message) ) } ) ;           
 
 });

@@ -8,7 +8,8 @@
   let tcode ;
   let jobnm = "등록" ;
   let copytr = "copytr" ;
-
+  let curRow = {};
+  
   let lvl, ttype, desc1, cmpCode ='', tdate, endDate, tdir=null, tuser=null, thost, tport, tenv='';
   const columns = [
     " ",
@@ -24,40 +25,26 @@
     "데이터건수",
   ];
 
-  async function copyRow(row) {
-    tcode = row.code ;
-    lvl = row.lvl;
-    ttype = row.type ;
-    desc1 = row.desc1;
-    cmpCode = row.cmpCode ;
-    tdate = row.tdate ;
-    endDate = row.endDate ;
-    tdir = row.tdir ;
-    tuser = row.tuser ;
-    thost = row.thost ;
-    tport = row.tport ;
-    tenv = row.tenv ;
-  }
-
   function updTcode() {
+    
     fetch("/tmaster", {
       method: jobnm === "등록" ? "POST" : "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        "code":tcode.toUpperCase() ,
-        "lvl":lvl,
-        "type":ttype,
-        "desc1":desc1,
-        "cmpCode":cmpCode,
-        "tdate":tdate,
-        "endDate":endDate,
-        "thost":thost,
-        "tport":tport,
-        "tenv":tenv,
-        "tdir":tdir,
-        "tuser":tuser
+        "code":curRow.code.toUpperCase() ,
+        "lvl":curRow.lvl,
+        "type":curRow.ttype,
+        "desc1":curRow.desc1,
+        "cmpCode":curRow.cmpCode,
+        "tdate":curRow.tdate,
+        "endDate":curRow.endDate,
+        "thost":curRow.thost,
+        "tport":curRow.tport,
+        "tenv":curRow.tenv,
+        "tdir":curRow.tdir,
+        "tuser":curRow.tuser
       })
     }).then( async (res) => {
       let rmsg = await res.json();
@@ -131,7 +118,10 @@
 
 </script>
 <div id="btns" style="display:flex; justify-content: flex-start; ">
-  <button on:click={() => { jobnm = "등록", endDate=null, cmpCode=null ; getModal().open(undefined,'50','70') }}>신규등록</button>
+  <button on:click={() => { jobnm = "등록", 
+    curRow.code = "",curRow.type = "1",curRow.lvl = '1',
+    curRow.endDate=null, curRow.cmpCode=null, curRow.tdate = (new Date).toISOString().slice(0,10) ; 
+    getModal().open(undefined,'50','60') }}>신규등록</button>
   <button on:click={delTcode}>선택삭제</button>
   <button on:click={getModal(copytr).open({},'60','60')}>전문생성</button>
   <button on:click={eraseTr}>전문삭제</button>
@@ -155,10 +145,12 @@
         {#each rows as row (row.code)}
           <tr
             class={row.type}
+            on:click={() => curRow = row}
             on:dblclick={() => {
-              copyRow(row) ;
+              // copyRow(row) ;
+              curRow = row ;
               jobnm = "수정";
-              getModal().open({},'50','70') ;
+              getModal().open({},'50','60') ;
             }}
           >
             <td><input type="checkbox" bind:checked={row.chk} /></td>
@@ -172,6 +164,10 @@
             <td class="thost">{row.thost}</td>
             <td class="tport">{row.tport}</td>
             <td class="cnt" style="text-align:right">{row.data_cnt.toLocaleString("ko-KR")}</td>
+            {#if (curRow === row)}
+            <td>◀</td>
+            {/if}
+
           </tr>
         {/each}
       {:catch err}
@@ -181,27 +177,27 @@
   </table>
 </div>
 <Modal>
-    <h2>{ jobnm !="등록" ? tcode : ""} 테스트코드 {jobnm}</h2>
+    <h2>{ jobnm !="등록" ? curRow.code : ""} 테스트코드 {jobnm}</h2>
     <div class="items">
-      <div class="item in_label">테스트코드:</div><div><input class="item in_value" pattern="[A-Z0-9]{3,6}" bind:value={tcode}></div>
-      <div class="item in_label">테스트명:</div><div ><input class="item in_value" bind:value={desc1}></div>
+      <div class="item in_label">테스트코드:</div><div><input class="item in_value" pattern="[A-Z0-9]{3,6}" bind:value={curRow.code}></div>
+      <div class="item in_label">테스트명:</div><div ><input class="item in_value" bind:value={curRow.desc1}></div>
       <div class="item in_label">타입:</div><div>
-        <select  class="item in_value" bind:value={ttype} >
+        <select  class="item in_value" bind:value={curRow.type} >
           {#each Object.entries(getTypes()) as [key, value], index (key)}
             <option value={key}>{value}</option>
           {/each}
         </select>
       </div>
       <div class="item in_label">단계:</div><div>
-        <select class="item in_value" bind:value={lvl} >
+        <select class="item in_value" bind:value={curRow.lvl} >
           {#each Object.entries(getLvls()) as [key, value], index (key)}
             <option value={key}>{value}</option>
           {/each}
         </select>
       </div>
-      <div class="item in_label">테스트시작일:</div><div><input class="item in_value" type="date" bind:value={tdate}></div>
-      <div class="item in_label">대상서버:</div><div><input class="item in_value" bind:value={thost}></div>
-      <div class="item in_label">대상Port:</div><div><input class="item in_value" type="number" min="2" max="65535" bind:value={tport}></div>
+      <div class="item in_label">테스트시작일:</div><div><input class="item in_value" type="date" bind:value={curRow.tdate}></div>
+      <div class="item in_label">대상서버:</div><div><input class="item in_value" bind:value={curRow.thost}></div>
+      <div class="item in_label">대상Port:</div><div><input class="item in_value" type="number" min="2" max="65535" bind:value={curRow.tport}></div>
     </div>
     <hr>
     <div>
@@ -226,7 +222,7 @@
   }
 
   .in_value {
-    border: 2px solid silver;
+    border: 1px solid silver;
     border-radius: 5px;
   }
   .in_label {

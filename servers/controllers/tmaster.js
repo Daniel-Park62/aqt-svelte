@@ -4,7 +4,7 @@ const aqtdb = require('../db/dbconn') ;
  
 router.get('/tsellist', function(req, res, next) {
 
-  aqtdb.query("	SELECT code, desc1 name, cmpcode from tmaster ")
+  aqtdb.query("	SELECT code, desc1 name, cmpcode,enddate  from tmaster ")
     .then( rows => res.json(rows) ) 
     .catch((e) => { return next(e) });
   
