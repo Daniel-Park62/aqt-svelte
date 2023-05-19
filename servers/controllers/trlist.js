@@ -10,13 +10,14 @@ router.post('/', async function(req, res, next) {
 
   let etcond = '';
   if (req.body.rcode) etcond = 'and (rcode = ' + req.body.rcode + ') ' ;
-  if (req.body.cond) etcond += 'and (' + req.body.cond + ') ' ;
+  if (req.body.cond) etcond += ' and (' + req.body.cond + ') ' ;
   // console.log(req.body);
   aqtdb.query({dateStrings:true, 
-               sql: "	SELECT pkey, cmpid id, tcode tid, o_stime, stime `송신시간`, rtime, elapsed `소요시간`, method, uri, sflag, rcode status, \
-                  rhead `수신헤더`, rlen `수신크기`,  date_format(cdate,'%Y-%m-%d %T') cdate \
-                  FROM ttcppacket t  where tcode like ? and uri rlike ? " + etcond + " order by o_stime limit ?, ? "
-    }, [ req.body.tcode, req.body.uri  , req.body.page * req.body.psize, +(req.body.psize)  ])
+               sql: "	SELECT t.pkey, cmpid id, tcode tid, o_stime, stime `송신시간`, rtime, elapsed `소요시간`, method, uri, sflag, rcode status, \
+                  if(sflag='2',errinfo, cast(rdata as char(250))) `수신데이터`,  \
+                  rlen `수신크기`,  date_format(cdate,'%Y-%m-%d %T') cdate \
+                  FROM ttcppacket t join tservice s on (t.uri = s.svcid and t.appid = s.appid) where tcode like ? and t.uri rlike ? and s.task rlike ? " + etcond + " order by o_stime limit ?, ? "
+    }, [ req.body.tcode, req.body.uri ,req.body.task , req.body.page * req.body.psize, +(req.body.psize)  ])
     .then( rows => { return res.json(rows) } ) 
     .catch((e) => { return next(e) });
   
@@ -28,13 +29,13 @@ router.post('/', async function(req, res, next) {
 
 router.get('/:id', async function(req, res, next) {
   // console.log(req.params)
-  let etcond = '';
-
-  aqtdb.query({dateStrings:true, 
-               sql: "	SELECT pkey, cmpid, tcode, o_stime, stime, rtime, svctime, elapsed, srcip, srcport, dstip, dstport, method,  \
-               uri, seqno, ackno, rcode, sflag, rhead, slen, rlen, cast(sdata AS CHAR) sdata , cast(rdata AS CHAR) rdata, date_format(cdate,'%Y-%m-%d %T') cdate \
-               FROM ttcppacket t  where pkey  = ? "  }
-              , [ req.params.id])
+  
+  // aqtdb.query({dateStrings:true, 
+  //              sql: "	SELECT pkey, cmpid, tcode, o_stime, stime, rtime, svctime, elapsed, srcip, srcport, dstip, dstport, method,  \
+  //              uri, seqno, ackno, rcode, errinfo,sflag, rhead, slen, rlen, cast(sdata AS CHAR) sdata , cast(rdata AS CHAR) rdata, date_format(cdate,'%Y-%m-%d %T') cdate \
+  //              FROM ttcppacket t  where pkey  = ? "  }
+  //             , [ req.params.id])
+    getPacket(req.params.id)
     .then( rows => { return res.json(rows) } ) 
     .catch((e) => { console.error(e); return next(e) });
   
@@ -50,9 +51,9 @@ router.get('/next/:id', async function(req, res, next) {
     
     const rows = await aqtdb.query({dateStrings:true, 
                sql: "	SELECT t.pkey, cmpid, t.tcode, t.o_stime, stime, rtime, svctime, elapsed, srcip, srcport, dstip, dstport, method,  \
-               uri, seqno, ackno, rcode, sflag, rhead, slen, rlen, cast(sdata AS CHAR) sdata , cast(rdata AS CHAR) rdata, date_format(cdate,'%Y-%m-%d %T') cdate \
-               FROM ttcppacket t ,(SELECT pkey, O_STIME, TCODE FROM ttcppacket where pkey = ?) c  \
-               where t.tcode = c.tcode and t.pkey  != c.pkey  and t.o_stime > c.o_stime order by t.o_stime limit 1"  }
+               uri, seqno, ackno, rcode, errinfo,sflag, rhead, slen, rlen, cast(sdata AS CHAR) sdata , cast(rdata AS CHAR) rdata, date_format(cdate,'%Y-%m-%d %T') cdate \
+               FROM ttcppacket t use index(tcode),(SELECT pkey, O_STIME, TCODE FROM ttcppacket where pkey = ?) c  \
+               where t.tcode = c.tcode and t.o_stime > c.o_stime and t.pkey  != c.pkey  limit 1"  }
               , [  req.params.id ]) ;
     if (rows.length > 0 ) {
       return res.json(rows) ;
@@ -77,9 +78,9 @@ router.get('/prev/:id', async function(req, res, next) {
     
     const rows = await aqtdb.query({dateStrings:true, 
                sql: "	SELECT t.pkey, cmpid, t.tcode, t.o_stime, stime, rtime, svctime, elapsed, srcip, srcport, dstip, dstport, method,  \
-               uri, seqno, ackno, rcode, sflag, rhead, slen, rlen, cast(sdata AS CHAR) sdata , cast(rdata AS CHAR) rdata, date_format(cdate,'%Y-%m-%d %T') cdate \
-               FROM ttcppacket t ,(SELECT pkey, O_STIME, TCODE FROM ttcppacket where pkey = ?) c  \
-               where t.tcode = c.tcode and t.pkey  != c.pkey  and t.o_stime < c.o_stime order by t.o_stime desc limit 1"  }
+               uri, seqno, ackno, rcode, errinfo, sflag, rhead, slen, rlen, cast(sdata AS CHAR) sdata , cast(rdata AS CHAR) rdata, date_format(cdate,'%Y-%m-%d %T') cdate \
+               FROM ttcppacket t use index(tcode),(SELECT pkey, O_STIME, TCODE FROM ttcppacket where pkey = ?) c  \
+               where t.tcode = c.tcode and t.o_stime < c.o_stime and t.pkey  != c.pkey  order by t.o_stime desc limit 1"  }
               , [  req.params.id ]) ;
     if (rows.length > 0 ) {
       res.json(rows) ;
@@ -100,8 +101,8 @@ router.get('/orig/:id', async function(req, res, next) {
   let etcond = '';
 
   aqtdb.query({dateStrings:true, 
-               sql: "	SELECT pkey, cmpid, tcode, o_stime, stime, rtime, svctime, elapsed, srcip, srcport, dstip, dstport, method,  \
-               uri, seqno, ackno, rcode, sflag, rhead, slen, rlen, cast(sdata AS CHAR) sdata , cast(rdata AS CHAR) rdata, date_format(cdate,'%Y-%m-%d %T') cdate \
+               sql: "	SELECT pkey,  tcode, o_stime, stime, rtime, svctime, elapsed, srcip, srcport, dstip, dstport, method,  \
+               uri, seqno, ackno, rcode, errinfo, sflag, rhead, slen, rlen, cast(sdata AS CHAR) sdata , cast(rdata AS CHAR) rdata, date_format(cdate,'%Y-%m-%d %T') cdate \
                FROM tloaddata t  where pkey  = ? limit 1"  }
               , [  req.params.id ])
     .then( rows => { return res.json(rows)} ) 
@@ -112,4 +113,11 @@ router.get('/orig/:id', async function(req, res, next) {
   // res.send({ scnt: scnt[0].scnt, data: rows} ) ;
 });
 
+async function getPacket(id) {
+  return await aqtdb.query({dateStrings:true, 
+    sql: "	SELECT pkey, cmpid, tcode, o_stime, stime, rtime, svctime, elapsed, srcip, srcport, dstip, dstport, method,  \
+                  uri, seqno, ackno, rcode, errinfo,sflag, rhead, slen, rlen, cast(sdata AS CHAR) sdata , cast(rdata AS CHAR) rdata, date_format(cdate,'%Y-%m-%d %T') cdate \
+                  FROM ttcppacket t  where pkey  = ? "  }
+   , [  id ]) ;
+}
 module.exports = router;

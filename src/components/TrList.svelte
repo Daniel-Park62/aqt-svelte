@@ -14,7 +14,8 @@ import Trtable from "./Trtable.svelte";
     page: 0,
     psize: 20,
     cond: "",
-    uri: ""
+    uri: "",
+    task:""
   };
 
   let tcodelist = [];
@@ -78,6 +79,7 @@ import Trtable from "./Trtable.svelte";
   }  
   .cond button {
     width: 4em;
+    border-radius: 6px;
   }
   .number-in input{
     max-width: 70px;

@@ -1,7 +1,7 @@
 
 <script>
-  import { onMount } from "svelte";
-
+  import { onMount,onDestroy } from "svelte";
+  import { gtcode } from "../aqtstore" ;
   let tlist_org = [];
   let tlist = [];
   let conds = {
@@ -13,6 +13,15 @@
   };
   let rdata = Promise.resolve([]);
   let rmsg="↓ 데이터생성 버튼을 누르면 작업이 시작됩니다."
+  let ltcode ;
+  const unsubs = gtcode.subscribe((data) => {
+    ltcode = data;
+    conds.srccode = ltcode ;
+    conds.dstcode = ltcode ;
+    // console.log(ltcode);
+  });
+  
+  onDestroy(unsubs) ;
 
   async function createTr() {
     rmsg = ">>> 작업중..." + JSON.stringify(conds) ;
@@ -38,7 +47,9 @@
   onMount(async () => {
     const res = await fetch( "/tmaster/tsellist" ) ;
     tlist = await res.json(); 
-    conds.dstcode = tlist[0].code ;
+    // const fcode = tlist.match(gtcode)[0] ;
+
+    conds.dstcode =  tlist[0].code ;
     const reso = await fetch( "/tmaster/torglist" ) ;
     tlist_org = await reso.json(); 
     tlist_org.push({tcode:'%',sdate:'ALL'});

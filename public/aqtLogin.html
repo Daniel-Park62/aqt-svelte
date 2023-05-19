@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+</head>
+<body>
+  
+
+<h3>Login(Test Administrator)</h3>
+<form on:submit|preventDefault="{handleSubmit}">
+
+  <input
+    class="form-field"
+    bind:value="{password}"
+    type="password"
+    placeholder="Password"
+  />
+  <button class="form-field">
+    Login
+  </button>
+</form>
+<p>
+  Don't have an account?
+  <strong class="link" on:click="{navigateToSignup}">일반사용자</strong>
+</p>
+<script>
+  let password ;
+  const handleSubmit=(e)=>{
+     let loginFields={password};
+   console.log(loginFields)
+  }
+  const navigateToSignup=()=>{}
+</script>
+
+</body>
+</html>

@@ -10,7 +10,7 @@
     "URI",
     "Status",
     "수신크기",
-    "수신헤더",
+    "수신데이터",
     "TID",
   ];
   let vid = "none";
@@ -22,6 +22,7 @@
     psize: 20,
     cond: "",
     uri: "",
+    task:""
   };
 
   let rdata = Promise.resolve([]);
@@ -33,7 +34,7 @@
   $: if(conds.tcode > ' ' ) { getTRlist();}
   
   async function getTRlist() {
-    console.log("entr ...", conds) ;
+    // console.log("entr ...", conds) ;
     if (conds.tcode == undefined) return Promise.resolve([]);
     pg = conds.page + 1  ;
     const res = await fetch("/trlist", {
@@ -47,7 +48,7 @@
       rdata = await res.json();
           //  console.log("trlist end", rdata) ;
     } else {
-      rdata = Promise.resolve([]);
+      // rdata = Promise.resolve([]);
       throw new Error(res);
     }
   }
@@ -143,7 +144,7 @@
             <td class="uri">{row.uri}</td>
             <td class="rcode">{row.status}</td>
             <td class="rlen">{row.수신크기.toLocaleString("ko-KR")}</td>
-            <td class="rhead">{row.수신헤더 === null ? '':row.수신헤더}</td>
+            <td class="rhead">{row.수신데이터 === null ? '':row.수신데이터}</td>
             <td class="tcode">{row.tid}</td>
           </tr>
         {/each}
@@ -179,6 +180,9 @@
     margin: 2px 4px;
     padding: 2px 3px;
     height: 1.7rem;
+  }
+  button {
+    border-radius: 6px;
   }
   .pgset button {
     width: 4em;

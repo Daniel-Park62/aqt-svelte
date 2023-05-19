@@ -1,5 +1,6 @@
 <script>
   import { onMount} from "svelte";
+  import { gtcode} from "../aqtstore" ;
   import { getLvlnm, getLvls, getTypenm , getTypes} from "./Common.svelte";
   import Modal,{getModal} from './Modal.svelte';
   import CopyTr from "./CopyTr.svelte";
@@ -123,7 +124,7 @@
     curRow.endDate=null, curRow.cmpCode=null, curRow.tdate = (new Date).toISOString().slice(0,10) ; 
     getModal().open(undefined,'50','60') }}>신규등록</button>
   <button on:click={delTcode}>선택삭제</button>
-  <button on:click={getModal(copytr).open({},'60','60')}>전문생성</button>
+  <button on:click={() => { gtcode.update(v => curRow.code) ; getModal(copytr).open(null,'60','60'); }}>전문생성</button>
   <button on:click={eraseTr}>전문삭제</button>
 </div>
 <hr>

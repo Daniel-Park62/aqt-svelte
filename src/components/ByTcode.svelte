@@ -1,6 +1,17 @@
 <script>
-  import { onMount } from "svelte";
+  import { onMount, getContext } from "svelte";
   import TidList from "./TidList.svelte";
+  import Trtable from "./Trtable.svelte";
+  import Modal,{getModal} from "./Modal.svelte";
+
+  let conds = {
+    tcode: "",
+    page: 0,
+    psize: 20,
+    cond: "",
+    uri: "",
+    task:""
+  };
 
   let tcode = "";
   let dtls = [];
@@ -35,7 +46,6 @@
   //   promise = getDatas() ;
   //  }) ;
   async function getDetail(c) {
-    console.log(c) ;
     const res = await fetch("/bytcode?tcode=" + c);
     dtls = await res.json();
     return dtls;
@@ -52,7 +62,7 @@
   <div class="bottom">
     <table class="tbl-svc">
       <thead>
-        <tr>
+        <tr >
           <th on:click={sort("svcid")}>서비스ID</th>
           <th on:click={sort("svckor")}>서비스명</th>
           <th on:click={sort("cumcnt")}>누적건수</th>
@@ -67,7 +77,7 @@
           <p>...waiting</p>
         {:then rows}
           {#each rows as row}
-            <tr>
+            <tr on:dblclick={()=> { conds.tcode=tcode; conds.uri=row.svcid; getModal().open() }}>
               <td style="max-width:30%">{row.svcid}</td>
               <td>{row.svckor}</td>
               <td>{row.cumcnt.toLocaleString("ko-KR")}</td>
@@ -84,6 +94,9 @@
     </table>
   </div>
 </div>
+<Modal>
+	<Trtable bind:conds/>
+</Modal>
 
 <style>
   .main {

@@ -4,6 +4,7 @@
 
   export let task = "";
   export let lvl = '';
+  export let ischg = 1;
 
   let promise = Promise.resolve([]);
   onMount(async () => {
@@ -33,7 +34,14 @@
         <p>...waiting</p>
       {:then rows}
         {#each rows as row}
-          <tr on:click={() => {task = row.task; lvl = row.lvl ; }} >
+          <tr on:click={() => {
+              ischg=0;
+              if (task != row.task || lvl != row.lvl) {
+                ischg=1;
+                task = row.task; lvl = row.lvl ; 
+              }
+              
+          }} >
             <td>{row.task}</td>
             <td>{getLvlnm(row.lvl)}</td>
             <td>{row.svc_cnt}</td>
@@ -41,7 +49,7 @@
             <td>{row.data_cnt.toLocaleString("ko-KR")}</td>
             <td>{row.scnt.toLocaleString("ko-KR")}</td>
             <td>{row.fcnt.toLocaleString("ko-KR")}</td>
-            <td>{(row.scnt * 100 / (row.scnt+row.fcnt)).toFixed(2) }</td>
+            <td>{row.srate }</td>
             <td>{row.data_cnt - row.scnt - row.fcnt}</td>
           </tr>
         {/each}

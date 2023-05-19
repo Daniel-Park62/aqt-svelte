@@ -11,7 +11,8 @@
     page: 0,
     psize: 20,
     cond: "",
-    uri: ""
+    uri: "",
+    task:""
   };
 
   let promise = Promise.resolve([]);
@@ -48,7 +49,7 @@
         <p>...waiting</p>
       {:then rows}
         {#each rows as row}
-          <tr on:click={() => tcode=row.code} on:dblclick={()=> { conds.tcode=row.code; getModal().open()}} >
+          <tr on:click={() => tcode=row.code} on:dblclick={()=> { conds.tcode=row.code;conds.page=0; getModal().open()}} >
             <td>{row.code}</td>
             <td>{row.desc1}</td>
             <td>{row.tdate}</td>

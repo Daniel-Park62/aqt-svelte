@@ -1,14 +1,25 @@
 <script>
   import { getLvlnm } from "./Common.svelte";
   import TaskList from "./TaskList.svelte";
+  import Trtable from "./Trtable.svelte";
+  import Modal,{getModal} from "./Modal.svelte";
 
-  let task, lvl ;
+  let conds = {
+    tcode: "",
+    page: 0,
+    psize: 20,
+    cond: "",
+    uri: "",
+    task:""
+  };
+
+  let task, lvl ,ischg = 0;
   let dtls = [];
   let promise = Promise.resolve([]);
 
   let sortBy = { col: "svcid", ascending: true };
 
-  $: if(task) promise = getDetail(task,lvl);
+  $: if(ischg) promise = getDetail(task,lvl);
 
   $: sort = (column) => {
     if (sortBy.col == column) {
@@ -35,18 +46,21 @@
   //   promise = getDatas() ;
   //  }) ;
   async function getDetail(t,l) {
+    if (t == '') t = 'EMPTY'
     const res = await fetch("/bytask/" + t + '/' + l);
-    dtls = await res.json();
-    return dtls;
+    if (res.ok)
+      return await res.json();
+    else
+      throw new Error(res.statusText);
   }
 </script>
 
 <div class="main">
   <div class="dashboard">
-    <TaskList bind:task bind:lvl />
+    <TaskList bind:task bind:lvl bind:ischg />
   </div>
   <div class="sub-tit">
-    서비스별 현황({task},{getLvlnm(lvl)})
+    서비스별 현황({task != '' ? task + ' : ' :''} {getLvlnm(lvl)})
   </div>
   <div class="bottom">
     <table class="tbl-svc">
@@ -67,7 +81,7 @@
           <p>...waiting</p>
         {:then rows}
           {#each rows as row}
-            <tr>
+            <tr on:dblclick={()=> { conds.tcode=row.tcode; conds.uri=row.svcid;conds.task=task; getModal().open() }}>
               <td style="max-width:30%">{row.svcid}</td>
               <td>{row.svckor}</td>
               <td>{row.cumcnt.toLocaleString("ko-KR")}</td>
@@ -85,6 +99,9 @@
     </table>
   </div>
 </div>
+<Modal>
+	<Trtable bind:conds/>
+</Modal>
 
 <style>
   .main {

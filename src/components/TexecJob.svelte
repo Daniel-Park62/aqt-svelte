@@ -51,6 +51,7 @@
       tdesc,
       tnum,
       dbskip,
+      limits,
       etc,
       in_file,
       outlogdir,
@@ -74,6 +75,7 @@
         tdesc,
         tnum,
         dbskip,
+        limits,
         etc,
         in_file,
         outlogdir,
@@ -229,6 +231,7 @@
           resultstat: 0,
           jobkind: 9,
           dbskip: "0",
+          limits: "",
           etc: "",
           in_file: "",
           reqstartDt: today.toISOString().slice(0, -5).replace("T", " "),
@@ -262,7 +265,7 @@
     </select>
 
     <div class="item in_label">Description:</div>
-    <input class="item in_value" bind:value={curRow.tdesc} />
+    <input class="item in_value" style="grid-column: 4 / span 3;" bind:value={curRow.tdesc} />
     <div class="item in_label">작업개수:</div>
     <input class="item in_value" type="number" bind:value={curRow.tnum} />
     <div class="item in_label">작업종류:</div>
@@ -296,14 +299,6 @@
         /> 전문생성</label
       >
     </div>
-    <div class="item in_label">작업요청일시:</div>
-    <input
-      class="item in_value"
-      type="datetime-local"
-      bind:value={curRow.reqstartDt}
-    />
-    <div class="item in_label">송신간격(ms):</div>
-    <input class="item in_value" type="number" bind:value={curRow.reqnum} />
     <div class="item in_label">수행결과:</div>
     <div class="item in_value" style="display:flex;align-items:center">
       <label
@@ -331,27 +326,36 @@
           name="exec"
           value={0}
           bind:group={curRow.exectype}
-        /> 즉시실행</label
-      >
+        /> 즉시실행</label>
       <label
-        ><input
-          type="radio"
-          name="exec"
-          value={1}
-          bind:group={curRow.exectype}
-        /> 원본송신간격</label
-      >
-    </div>
+      ><input
+        type="radio"
+        name="exec"
+        value={1}
+        bind:group={curRow.exectype}
+      /> 원본송신간격</label>
+  </div>
+
+    <div class="item in_label">송신간격(ms):</div>
+    <input class="item in_value" type="number" bind:value={curRow.reqnum} />
+    <div class="item in_label">처리건수:</div>
+    <input class="item in_value" style="grid-column: 2 / span 2;" bind:value={curRow.limits} />
+    <div class="item in_label">작업요청일시:</div>
+    <input
+      class="item in_value" style="grid-column: 5 / span 2;"
+      type="datetime-local"
+      bind:value={curRow.reqstartDt}
+    />
     <div class="item in_label">반복횟수:</div>
     <input class="item in_value" type="number" bind:value={curRow.repnum} />
     <div class="item in_label">대상선택조건:</div>
-    <input class="item in_value" bind:value={curRow.etc} />
+    <input class="item in_value" style="grid-column: 2 / span 2;" bind:value={curRow.etc} />
     <div class="item in_label">작업메세지:</div>
     <textarea
       readonly
       class="item in_value"
       bind:value={curRow.msg}
-      style="grid-column: 4 / span 3;"
+      style="grid-column: 5 / span 4;"
     />
   </div>
 </div>
@@ -375,12 +379,14 @@
   .in_value > label,
   .rlabel {
     margin: 0px 5px;
+    font-size: 0.9em;
   }
   .items {
     display: grid;
-    grid-template-columns: repeat(2, 7rem auto) 7rem 5rem;
+    grid-template-columns: repeat(3, 7rem auto) 7rem 5rem;
     gap: 3px 10px;
     align-content: start;
+    /* align-items: center; */
     margin: 10px;
   }
 

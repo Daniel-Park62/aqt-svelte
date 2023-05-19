@@ -4,29 +4,36 @@
   
   let tcode ;
   let svccnt = 999;
-  let datas = {svccnt:0, rows:[{lvl:'1'},{lvl:'2'}]};
+  let promi = Promise.resolve( {svccnt:0, rows:[{lvl:'1',svc_cnt:0 },{lvl:'2',svc_cnt:0}]});
+  
   async function getdata() {
 //    try { 
      const res = await fetch("/dashboard/summary") ;
-     if (res.status === 200) {
-       datas = await res.json();
+     let datas = await res.json();
+
+     if (res.ok) {
+       return datas;
      } else {
        throw new Error(res.statusText);
      }
+
   //  } catch (e) {
   //    console.log("call /dashboard/summary error", e) ;
   //  }
 
   }
   
-  onMount( getdata );
+  onMount( () => promi = getdata() );
 
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="main"  on:click={getdata}>
+<div class="main"  on:click={ () => promi = getdata() }>
+  {#await promi}
+    <p>loading..</p>
+  {:then datas}
   <div class="container">
-      
+
     <div class="subm">
       <div class="cap">단위테스트</div>
       <div class="items">
@@ -38,8 +45,8 @@
         </div>
 
         <div class="item2 item">
-          <div>최신테스트현황</div>
-          <div class="per">{(datas.rows[0].scnt * 100 / datas.rows[0].data_cnt).toFixed(2)  }%</div>
+          <div>테스트성공률</div>
+          <div class="per">{datas.rows[0].srate *1  }%</div>
           <span class="lbl">수행건수 :</span><span>{( datas.rows[0].data_cnt * 1).toLocaleString("ko-KR") }</span><br>
           <span class="lbl">성공건수 :</span><span>{(datas.rows[0].scnt * 1).toLocaleString("ko-KR")}</span>
         </div>
@@ -56,7 +63,7 @@
         </div>
 
         <div class="item2 item">
-          <div>최신테스트현황</div>
+          <div>테스트성공률</div>
           <div class="per">{(datas.rows[1].scnt * 100 / datas.rows[1].data_cnt).toFixed(2) }%</div>
           <span class="lbl">수행건수 :</span><span>{( datas.rows[1].data_cnt * 1).toLocaleString("ko-KR") }</span><br>
           <span class="lbl">성공건수 :</span><span>{(datas.rows[1].scnt * 1).toLocaleString("ko-KR")}</span>
@@ -64,6 +71,9 @@
       </div> 
     </div>
   </div>
+  {:catch error}
+    <p style="color: red">{error.message}</p>
+  {/await}
 </div>
 <div class="tlist"><TidList bind:tcode /></div>
 
