@@ -77,7 +77,7 @@
           <p>...waiting</p>
         {:then rows}
           {#each rows as row}
-            <tr on:dblclick={()=> { conds.tcode=tcode; conds.uri=row.svcid; getModal().open() }}>
+            <tr on:dblclick={()=> { conds.tcode=tcode;conds.page=0; conds.uri=row.svcid; getModal().open() }}>
               <td style="max-width:30%">{row.svcid}</td>
               <td>{row.svckor}</td>
               <td>{row.cumcnt.toLocaleString("ko-KR")}</td>

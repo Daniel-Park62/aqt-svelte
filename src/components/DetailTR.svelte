@@ -41,6 +41,7 @@
 
   function closedtl() {
     vid = "none";
+    // modal = null ;
   }
 
   async function viewOrig(pid) {

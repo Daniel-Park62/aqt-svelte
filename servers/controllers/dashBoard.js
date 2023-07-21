@@ -4,7 +4,7 @@ const aqtdb = require('../db/dbconn') ;
 // BigInt.prototype.toJSON = function() { return this.toString(); }
 
 router.get('/', function (req, res, next) {
-  aqtdb.query({ dateStrings: true, sql: 'select * from vtrxlist order by lvl desc, tdate desc' })
+  aqtdb.query({ dateStrings: true, sql: 'select * from vtrxlist order by tdate desc' })
     .then(rows => res.json(rows) )
     .catch((e) => {  return next(e) }) ;
     

@@ -36,16 +36,16 @@
       body: JSON.stringify({
         "code":curRow.code.toUpperCase() ,
         "lvl":curRow.lvl,
-        "type":curRow.ttype,
+        "type":curRow.type,
         "desc1":curRow.desc1,
         "cmpCode":curRow.cmpCode,
         "tdate":curRow.tdate,
         "endDate":curRow.endDate,
-        "thost":curRow.thost,
-        "tport":curRow.tport,
-        "tenv":curRow.tenv,
-        "tdir":curRow.tdir,
-        "tuser":curRow.tuser
+        "thost":curRow.thost ?? '',
+        "tport":curRow.tport ?? 0,
+        "tenv":curRow.tenv ?? '',
+        "tdir":curRow.tdir ?? '',
+        "tuser":curRow.tuser ?? ''
       })
     }).then( async (res) => {
       let rmsg = await res.json();

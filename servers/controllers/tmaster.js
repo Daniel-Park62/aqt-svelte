@@ -38,6 +38,7 @@ router.post('/copyTr', function(req, res, next) {
     .then(r => {
       // console.log("ok:",r[0]) ;
       res.status(201).send(r[0] );
+      aqtdb.query('call sp_summary(?)',[req.body.dstcode]) ;
     })
     .catch( e => {
       console.error("error:",e) ;
@@ -67,7 +68,7 @@ router.post('/',async function(req, res, next) {
     req.body.tenv
   ] ;
   const qstr = 'INSERT INTO tmaster ' +
-	             ' (code, `type`, lvl, desc1, cmpCode, tdate, endDate, tdir, tuser, thost, tport, tenv) ' +
+	             ' (code, type, lvl, desc1, cmpCode, tdate, endDate, tdir, tuser, thost, tport, tenv) ' +
                'VALUES (?, ?, ?, ?, ?,?,?,?, ?,?,?,? ) ' ;
   aqtdb.query(qstr, parms)
   .then(r => res.status(201).send({message: `${req.body.code}` + " 등록되었습니다."}) )
