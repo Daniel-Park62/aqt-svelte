@@ -6,9 +6,11 @@
 	let error = "";
 
 	async function login() {
-		const chk = await getCheckPass(password);
+		// const chk = await getCheckPass(password);
+		const res = await fetch("/logonchk?pass=" + password) ;
+    let data = await res.json();
 
-		if (chk) {
+		if (data.chk) {
 			$isLogged = 2;
 			if (error) error = "";
 		} else {

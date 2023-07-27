@@ -9,6 +9,7 @@
 	import LoginComp from "./components/LoginComp.svelte";
 	import { isLogged, setCheckPass } from "./aqtstore";
 	import { onMount } from "svelte";
+  import RegService from "./components/RegService.svelte";
 	onMount(async () => {
 		const res = await fetch("/dashboard/testPassword");
 		const row = await res.json();
@@ -27,7 +28,7 @@
 
 	let mitems2 = [
 		{ nm: "1. App 등록", url: "regapp", cnm: RegApp },
-		{ nm: "2. 서비스 등록", url: "regsvc", cnm: ByTcode },
+		{ nm: "2. 서비스 등록", url: "regService", cnm: RegService },
 		{ nm: "3. 테스트등록/전문생성", url: "regtcode", cnm: RegTcode },
 		{ nm: "4. 테스트 실행", url: "texecjob", cnm: TexecJob },
 	];

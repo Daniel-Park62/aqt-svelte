@@ -15,7 +15,9 @@ const bytask = require('./controllers/bytask') ;
 const regapp = require('./controllers/regapp') ;
 const trlist = require('./controllers/trlist') ;
 const tmaster = require('./controllers/tmaster') ;
+const tservice = require('./controllers/tservice') ;
 const texecjob = require('./controllers/texecjob') ;
+const logonchk = require('./controllers/logonchk') ;
 
 app.use(cors());
 
@@ -25,12 +27,14 @@ app.get('/', (req, res) => {
    res.sendFile(path.resolve(__dirname, '../public', 'index.html'));
 });
 
+app.use('/logonchk', logonchk) ;
 app.use('/dashboard', dashboard) ;
 app.use('/bytcode', bytcode) ;
 app.use('/bytask', bytask) ;
 app.use('/regapp', regapp) ;
 app.use('/trlist', trlist) ;
 app.use('/tmaster', tmaster) ;
+app.use('/tservice', tservice) ;
 app.use('/texecjob', texecjob) ;
 
 app.listen(port, () => {

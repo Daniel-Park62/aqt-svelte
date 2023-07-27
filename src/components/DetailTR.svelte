@@ -205,6 +205,7 @@
     position: fixed; /* Stay in place */
     z-index: 1; /* Sit on top */
     left: 0;
+    right: 0;
     top: 0;
     width: 100%; /* Full width */
     height: 100%; /* Full height */
@@ -219,19 +220,18 @@
     margin: 0% auto; /* 15% from the top and centered */
     padding: 15px;
     border: 1px solid #888;
-    width: 90%;
+    width: 95%;
   }
 
   .data {
     display: flex;
   }
-  .cdata,
   #odata {
-    flex: 1 1 0;
-  }
-  #odata {
-    border-left: 2px solid darkblue;
     display: none;
+  }
+  .cdata, #odata {
+    flex: 1 1 0;
+    border-left: 2px solid darkblue;
   }
   /* .modal-content > div  {
     width : 95%;

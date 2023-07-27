@@ -4,12 +4,14 @@
   let columns = ["APPID", "APP명", "담당자"];
   let columns_dtl = ["APPID", "Host IP", "0"];
   let data = [];
+  let deldata = [];
+  let deldata_dtl = [];
   let datadtl = [];
   let newRow = [...columns];
   let newRow_dtl = [...columns_dtl];
 
   let promise = Promise.resolve([]);
-  let promise_dtl = Promise.resolve([]); 
+  let promise_dtl = Promise.resolve([]);
   let appid = "";
 
   function addRow() {
@@ -17,65 +19,158 @@
     newRow = columns;
   }
   function addRow_dtl() {
-    datadtl = [...datadtl, [...newRow_dtl] ];
+    newRow_dtl[0] = appid ;
+    datadtl = [...datadtl, [...newRow_dtl]];
     newRow_dtl = columns_dtl;
   }
 
   function deleteRow(rowToBeDeleted) {
+    deldata.push(rowToBeDeleted);
     data = data.filter((row) => row != rowToBeDeleted);
   }
   function deleteRow_dtl(rowToBeDeleted) {
+    deldata_dtl.push(rowToBeDeleted);
     datadtl = datadtl.filter((row) => row != rowToBeDeleted);
   }
-  
-   async function getApphost(appid) {
-    if (appid > '') {
-      const res = await fetch("/regapp/host/" + appid) ;
-      datadtl = await res.json() ; 
+
+  async function getApphost(appid) {
+    if (appid > "") {
+      const res = await fetch("/regapp/host/" + appid);
+      datadtl = await res.json();
     } else {
-      datadtl = Promise.resolve([]); 
+      datadtl = Promise.resolve([]);
     }
-    return datadtl ;
+    return datadtl;
   }
 
-  $: promise = data ;
-  $: promise_dtl = getApphost(appid) ;
+  $: promise = data;
+  $: promise_dtl = getApphost(appid);
 
-  onMount(async () => {
+  async function getData() {
     const res = await fetch("/regapp");
-    
     data = await res.json();
-    // promise = Promise.resolve(data);
+    deldata = [];
+    deldata_dtl = [];
+  }
+  function delApp() {
+    // let udata = [];
+    // data.forEach(r => { console.log(r) ; udata.push(r) } ) ;
 
-  });
+    fetch("/regapp", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        values: deldata.map(([e1]) => e1),
+      }),
+    }).catch((err) => {
+      throw err;
+    });
+  }
+  function delAppHost() {
+    // let udata = [];
+    // data.forEach(r => { console.log(r) ; udata.push(r) } ) ;
 
+    fetch("/regapp/host", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        values: deldata_dtl.map(([e1]) => e1),
+      }),
+    }).catch((err) => {
+      throw err;
+    });
+  }
+
+  function updApp() {
+    // let udata = [];
+    // data.forEach(r => { console.log(r) ; udata.push(r) } ) ;
+    if (deldata.length) delApp();
+
+    fetch("/regapp", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        values: data,
+      }),
+    })
+      .then(async (res) => {
+        let rmsg = await res.json();
+        alert(rmsg.message);
+        if (res.status < 300) {
+          getData();
+        }
+      })
+      .catch((err) => {
+        alert("error:" + err.message);
+      });
+  }
+
+  function updAppHost() {
+    // let udata = [];
+    // data.forEach(r => { console.log(r) ; udata.push(r) } ) ;
+    if (deldata_dtl.length) delAppHost();
+
+    fetch("/regapp/host", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        values: datadtl,
+      }),
+    }).catch((err) => {
+      throw err;
+    });
+  }
+
+  onMount(getData);
 </script>
+
+<div id="btns" style="display:flex; justify-content: flex-start; ">
+  <button on:click={updApp}>적용</button>
+  <button on:click={getData}>적용취소</button>
+</div>
+<hr />
 
 <div class="container">
   <table class="app-tbl item">
     <thead>
-    <tr>
-      <th>APP id</th>
-      <th>APP 명</th>
-      <th>담당자</th>
-      <th style="width:4rem">삭제</th>
-    </tr>
-  </thead>
+      <tr>
+        <th>APP id</th>
+        <th>APP 명</th>
+        <th>담당자</th>
+        <th style="width:4rem">삭제</th>
+      </tr>
+    </thead>
     {#await promise}
       <p>...waiting</p>
     {:then rows}
       {#each rows as row}
-        <tr on:click={ () => appid = row[0]}>
-          {#each row as cell}
-            <td contenteditable="true" bind:innerHTML={cell} />
+        <tr on:click={() => (appid = row[0])}>
+          {#each row as cell, i}
+            {#if i != 0}
+              <td contenteditable="true" bind:textContent={cell} />
+            {:else}
+              <td contenteditable="false" bind:innerHTML={cell} />
+            {/if}
           {/each}
           <td><button on:click={() => deleteRow(row)}>X</button></td>
         </tr>
       {/each}
     {/await}
     <tr style="color: grey">
-      {#each newRow as column}
-        <td contenteditable="true" bind:innerHTML={column} />
+      {#each newRow as column, i}
+        {#if i != 0}
+          <td contenteditable="true" bind:textContent={column} />
+        {:else}
+          <td contenteditable="false" bind:textContent={column} />
+        {/if}
       {/each}
       <td><button on:click={addRow}>add</button></td>
     </tr>
@@ -83,37 +178,36 @@
   </table>
   <table class="apphost item">
     <thead>
-    <tr>
-      <th>APP ID</th>
-      <th>Host IP</th>
-      <th>Port</th>
-      <th style="width:4rem">삭제</th>
-    </tr>
-  </thead>
+      <tr>
+        <th>APP ID</th>
+        <th>Host IP</th>
+        <th>Port</th>
+        <th style="width:4rem">삭제</th>
+      </tr>
+    </thead>
     {#await promise_dtl}
       <p>searching...</p>
-    {:then rows} 
-      
+    {:then rows}
       {#each rows as row}
         <tr>
           {#each row as cell, i}
             {#if i != 0}
-              <td contenteditable="true" bind:innerHTML={cell} />
+              <td contenteditable="true" bind:textContent={cell} />
             {:else}
-              <td contenteditable="false" bind:innerHTML={cell} />
+              <td contenteditable="false" bind:textContent={cell} />
             {/if}
           {/each}
           <td><button on:click={() => deleteRow_dtl(row)}>X</button></td>
         </tr>
       {/each}
     {:catch error}
-    <p>{error.message}</p>
-     {/await}
-      <tr style="color: grey">
+      <p>{error.message}</p>
+    {/await}
+    <tr style="color: grey">
       {#each newRow_dtl as col}
-        <td contenteditable="true" bind:innerHTML={col} />
+        <td contenteditable="true" bind:textContent={col} />
       {/each}
-      <td><button on:click="{addRow_dtl}">add</button></td>
+      <td><button on:click={addRow_dtl}>add</button></td>
     </tr>
   </table>
 </div>
