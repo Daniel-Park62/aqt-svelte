@@ -19,9 +19,9 @@
     newRow = columns;
   }
   function addRow_dtl() {
-    newRow_dtl[0] = appid ;
+    newRow_dtl[0] = appid;
     datadtl = [...datadtl, [...newRow_dtl]];
-    newRow_dtl = columns_dtl;
+    newRow_dtl = [...columns_dtl];
   }
 
   function deleteRow(rowToBeDeleted) {
@@ -40,11 +40,13 @@
     } else {
       datadtl = Promise.resolve([]);
     }
+    newRow_dtl = [...columns_dtl];
     return datadtl;
   }
 
   $: promise = data;
-  $: promise_dtl = getApphost(appid);
+  $: promise_dtl =  getApphost(appid);
+  $: promise_dtl =  datadtl;
 
   async function getData() {
     const res = await fetch("/regapp");
@@ -88,6 +90,7 @@
   function updApp() {
     // let udata = [];
     // data.forEach(r => { console.log(r) ; udata.push(r) } ) ;
+    updAppHost() ;
     if (deldata.length) delApp();
 
     fetch("/regapp", {
@@ -157,7 +160,7 @@
             {#if i != 0}
               <td contenteditable="true" bind:textContent={cell} />
             {:else}
-              <td contenteditable="false" bind:innerHTML={cell} />
+              <td contenteditable="false" bind:textContent={cell} />
             {/if}
           {/each}
           <td><button on:click={() => deleteRow(row)}>X</button></td>
@@ -204,8 +207,12 @@
       <p>{error.message}</p>
     {/await}
     <tr style="color: grey">
-      {#each newRow_dtl as col}
-        <td contenteditable="true" bind:textContent={col} />
+      {#each newRow_dtl as col, i}
+        {#if i != 0}
+          <td contenteditable="true" bind:textContent={col} />
+        {:else}
+          <td contenteditable="false" bind:textContent={col} />
+        {/if}
       {/each}
       <td><button on:click={addRow_dtl}>add</button></td>
     </tr>

@@ -81,7 +81,7 @@
   <div class="item in_label">기타조건:</div><input class="item in_value" bind:value={conds.cond}/>
 </div>
 <p>** 작업정보 **</p>
-<div>{rmsg}</div>
+<p> {rmsg}</p>
 <hr>
 <div>
   <button on:click={createTr}>데이터생성</button>

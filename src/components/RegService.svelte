@@ -13,7 +13,7 @@
   let pkey, svcid, appid, svckor, svceng, svckind, task, manager;
   const columns = [
     " ",
-    "APP ID",
+    "APP ",
     "서비스(URI)",
     "서비스명(한글)",
     "서비스명(영문)",
@@ -23,16 +23,18 @@
   ];
 
   function updService() {
+    console.log( rdata.filter((r) => ( r[0] && r[1] != 0) ) ) ;
+    const upds = rdata.filter((r) => ( r[0] && r[1] != 0) ).map((r) => r.slice(1));
+    const inss = rdata.filter((r) => ( r[0] && r[1] == 0) ).map((r) => r.slice(2));
+    console.log(upds) ;
     fetch("/tservice", {
-      method: jobnm === "등록" ? "POST" : "PUT",
+      method: "POST" ,
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        values: [
-          [1, 2, 3],
-          [66, 77, 88],
-        ],
+        upd: upds,
+        ins: inss
       }),
     })
       .then(async (res) => {
@@ -48,7 +50,7 @@
   }
 
   function delService() {
-    const delcodes = rdata.filter((r) => r.chk).map((r) => r.pkey);
+    const delcodes = rdata.filter((r) => r[0]).map((r) => r[1]);
 
     if (delcodes.length == 0) return;
     // console.log("del code:", delcodes) ;
@@ -89,7 +91,7 @@
   <button on:click={delService}>선택삭제</button>
 </div>
 <hr />
-<div class="tmasterList">
+<div class="tList">
   <table>
     <thead>
       <tr>
@@ -104,30 +106,22 @@
       {#await rdata}
         <p>...waiting</p>
       {:then rows}
-        {#each rows as row (row.pkey)}
+        {#each rows as row (row[1])}
           <tr
             on:click={() => (curRow = row)}
-            on:dblclick={() => {
-              // copyRow(row) ;
-              curRow = row;
-              jobnm = "수정";
-            }}
           >
-            <td><input type="checkbox" bind:checked={row.chk} /></td>
-            <td class="appid">{row.appid}</td>
-            <td class="svcid">{row.svcid}</td>
+            <td><input type="checkbox" bind:checked={row[0]} /></td>
+            <td class="appid" >{row[2]}</td>
+            <td class="svcid" style="width:20rem">{row[3]}</td>
             <td
               contenteditable="true"
               class="svckor"
-              style="width:10rem"
-              bind:textContent={row.svckor}>{row.svckor}</td
-            >
-            <td contenteditable="true" class="svceng" style="width:10rem"
-              >{row.svceng}</td
-            >
-            <td contenteditable="true" class="task">{row.task}</td>
-            <td contenteditable="true" class="manager">{row.manager}</td>
-            <td contenteditable="true" class="svckind">{row.svckind}</td>
+              style="width:20%"
+              bind:textContent={row[4]}/>
+            <td contenteditable="true" bind:textContent={row[5]} class="svceng" style="width:20%" />
+            <td contenteditable="true" class="task" bind:textContent={row[6]}/>
+            <td contenteditable="true" class="manager" bind:textContent={row[7]}/>
+            <td contenteditable="true" class="svckind" bind:textContent={row[8]} />
             {#if curRow === row}
               <td>◀</td>
             {/if}
@@ -141,6 +135,10 @@
 </div>
 
 <style>
+  .tList {
+    max-height: 90vh;
+    overflow: auto;
+  }
   table {
     border-collapse: collapse;
     overflow: auto;
@@ -175,7 +173,11 @@
   thead th:last-child {
     border-top-right-radius: 5px;
   }
-
+  .tList th {
+    text-align: center;
+    position: sticky;
+    top: 0;
+  }
   tbody tr:last-child td:first-child {
     border-bottom-left-radius: 5px;
   }
@@ -186,5 +188,9 @@
 
   tbody tr:hover {
     background-color: #ddd;
+  }
+
+  .svcid, .svckor, .svceng {
+    word-break:break-all;
   }
 </style>

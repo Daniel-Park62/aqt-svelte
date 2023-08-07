@@ -33,7 +33,7 @@ router.post('/copyTr', function(req, res, next) {
     req.body.cnt
   ] ;
   // console.log(parms) ;
-  const qstr = 'call sp_loaddata2(?,?,?,?) ' ;
+  const qstr = req.body.cnt > 0 ? 'call sp_loaddata2(?,?,?,?) ' : 'call sp_loaddata(?,?,?) ';
   aqtdb.query(qstr, parms) 
     .then(r => {
       // console.log("ok:",r[0]) ;
