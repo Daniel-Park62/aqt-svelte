@@ -1,4 +1,5 @@
 <script>
+	import { onMount } from "svelte";
 	import ByTcode from "./components/ByTcode.svelte";
 	import DashBoard from "./components/DashBoard.svelte";
 	import ByTask from "./components/ByTask.svelte";
@@ -8,8 +9,8 @@
 	import TexecJob from "./components/TexecJob.svelte";
 	import LoginComp from "./components/LoginComp.svelte";
 	import { isLogged, setCheckPass } from "./aqtstore";
-	import { onMount } from "svelte";
   import RegService from "./components/RegService.svelte";
+  import RegUser from "./components/RegUser.svelte";
 	onMount(async () => {
 		const res = await fetch("/dashboard/testPassword");
 		const row = await res.json();
@@ -28,7 +29,8 @@
 
 	let mitems2 = [
 		{ nm: "1. App 등록", url: "regapp", cnm: RegApp },
-		{ nm: "2. 서비스 등록", url: "regService", cnm: RegService },
+		{ nm: "2. 사용자 등록", url: "regUser", cnm: RegUser },
+		{ nm: "3. 서비스 등록", url: "regService", cnm: RegService },
 		{ nm: "3. 테스트등록/전문생성", url: "regtcode", cnm: RegTcode },
 		{ nm: "4. 테스트 실행", url: "texecjob", cnm: TexecJob },
 	];

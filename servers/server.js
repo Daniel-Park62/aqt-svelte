@@ -18,6 +18,7 @@ const tmaster = require('./controllers/tmaster') ;
 const tservice = require('./controllers/tservice') ;
 const texecjob = require('./controllers/texecjob') ;
 const logonchk = require('./controllers/logonchk') ;
+const tuser = require('./controllers/tuser') ;
 
 app.use(cors());
 
@@ -36,6 +37,7 @@ app.use('/trlist', trlist) ;
 app.use('/tmaster', tmaster) ;
 app.use('/tservice', tservice) ;
 app.use('/texecjob', texecjob) ;
+app.use('/tuser', tuser) ;
 
 app.listen(port, () => {
    console.log(`Server is up at port ${port}`);
@@ -43,6 +45,7 @@ app.listen(port, () => {
 
 app.use(notFound);
 app.use(errorHandler);
+
 
 // (async () => {
 //   const conn = await aqtdb.getConn() ;

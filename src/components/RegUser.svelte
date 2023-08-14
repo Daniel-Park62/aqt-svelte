@@ -3,49 +3,23 @@
 
   let rdata = Promise.resolve([]);
   let curRow = {};
-  let cols = [true,0, "","서비스","한글명","영문명","","","0"];
+  let cols = [true,0, "User","Host", "사용자명",false,"",(new Date()).toLocaleDateString()];
   let newRow = [...cols];
-  let pkey, svcid, appid, svckor, svceng, svckind, task, manager;
   const columns = [
     " ",
-    "APP ",
-    "서비스(URI)",
-    "서비스명(한글)",
-    "서비스명(영문)",
-    "업무명",
-    "담당자",
-    "서비스종류",
+    "UserId ",
+    "Host",
+    "사용자명",
+    "Admin",
+    "접근가능업무",
+    "등록일",
   ];
 
-  function insService() {
-    const inss = newRow.slice(2);
-    
-    fetch("/tservice", {
-      method: "POST" ,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        ins: inss
-      }),
-    })
-      .then(async (res) => {
-        let rmsg = await res.json();
-        alert(rmsg.message);
-        if (res.status < 300) {
-          getdata();
-        }
-      })
-      .catch((err) => {
-        alert("error:" + err.message);
-      });
-  }
-
   function updService() {
-    const upds = rdata.filter((r) => ( r[0] && r[1] != 0) ).map((r) => r.slice(1));
-    const inss = rdata.filter((r) => ( r[0] && r[1] == 0) ).map((r) => r.slice(2));
+    const upds = rdata.filter((r) => ( r[0] && r[1] != 0) ).map((r) => r.slice(1,7));
+    const inss = rdata.filter((r) => ( r[0] && r[1] == 0) ).map((r) => r.slice(2,7));
   console.log(inss)     ;
-    fetch("/tservice", {
+    fetch("/tuser", {
       method: "POST" ,
       headers: {
         "Content-Type": "application/json",
@@ -72,7 +46,7 @@
 
     if (delcodes.length == 0) return;
     // console.log("del code:", delcodes) ;
-    fetch("/tservice", {
+    fetch("/tuser", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -93,7 +67,7 @@
       });
   }
   async function getdata() {
-    const res = await fetch("/tservice");
+    const res = await fetch("/tuser");
     if (res.status === 200) {
       rdata = await res.json();
     } else {
@@ -127,25 +101,19 @@
         <p>...waiting</p>
       {:then rows}
         {#each rows as row }
-          <tr
-            on:click={() => (curRow = row)}
-          >
+          <tr on:click={() => (curRow = row)} >
             <td><input type="checkbox" bind:checked={row[0]} /></td>
-            <td class="appid" >{row[2]}</td>
             {#if row[1] === 0}
-            <td class="svcid" contenteditable="true" style="width:20rem" bind:textContent={row[3]}/>
+            <td class="usrid" contenteditable="true" style="width:10rem" bind:textContent={row[2]}/>
+            <td class="host" contenteditable="true" style="width:15rem" bind:textContent={row[3]}/>
             {:else}
-            <td class="svcid" style="width:20rem">{row[3]}</td>
+            <td class="usrid" style="width:10rem">{row[2]}</td>
+            <td class="host" style="width:15rem">{row[3]}</td>
             {/if}
-            <td
-              contenteditable="true"
-              class="svckor"
-              style="width:20%"
-              bind:textContent={row[4]}/>
-            <td contenteditable="true" bind:textContent={row[5]} class="svceng" style="width:20%" />
-            <td contenteditable="true" class="task" bind:textContent={row[6]}/>
-            <td contenteditable="true" class="manager" bind:textContent={row[7]}/>
-            <td contenteditable="true" class="svckind" bind:textContent={row[8]} />
+            <td contenteditable="true" class="usrdesc" style="width:20%" bind:textContent={row[4]}/>
+            <td><input type="checkbox" bind:checked={row[5]}/></td> 
+            <td contenteditable="true" class="apps" bind:textContent={row[6]}/>
+            <td>{row[7]}</td>
             {#if curRow === row}
               <td>◀</td>
             {/if}

@@ -1,14 +1,15 @@
 <script>
 	import { getCheckPass, isLogged } from "../aqtstore";
-	
-	const imgUrl = new URL('/images/Logo.png', import.meta.url).href
+
+	const imgUrl = new URL("/images/Logo.png", import.meta.url).href;
 	let password = "";
+	let usrid = "";
 	let error = "";
 
 	async function login() {
 		// const chk = await getCheckPass(password);
-		const res = await fetch("/logonchk?pass=" + password) ;
-    let data = await res.json();
+		const res = await fetch("/logonchk?pass=" + password);
+		let data = await res.json();
 
 		if (data.chk) {
 			$isLogged = 2;
@@ -16,6 +17,38 @@
 		} else {
 			error = "비밀번호가 맞지않습니다.";
 		}
+	}
+
+	async function login3() {
+		console.log( password, usrid);
+		fetch("/logonchk", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				pass:
+					Math.floor(Math.random() * 100)
+						.toString()
+						.padStart(2, "0") +
+					Buffer.from(password, "utf8").toString("base64"),
+				usrid:
+					Math.floor(Math.random() * 10) +
+					Buffer.from(password, "utf8").toString("base64"),
+			}),
+		})
+			.then(async (res) => {
+				const data = await res.json();
+				if (data.chk) {
+					$isLogged = 2;
+					if (error) error = "";
+				} else {
+					error = "비밀번호가 맞지않습니다.";
+				}
+			})
+			.catch((err) => {
+				error = err.message;
+			});
 	}
 
 	async function login2() {
@@ -27,6 +60,7 @@
 	<img src={imgUrl} alt="" />
 	<h2>비밀번호</h2>
 	<form on:submit|preventDefault={login} id="login-form">
+		<input bind:value={usrid} />
 		<input
 			type="password"
 			class="form-control"
@@ -35,7 +69,7 @@
 		/>
 		<div class="btns">
 			<button type="submit" class="btn1">관리자로그인</button>
-			<button on:click={login2} class="btn2">일반사용자</button>
+			<button on:click={login3} class="btn2">일반사용자</button>
 		</div>
 		<div id="error_message" class="text-danger">
 			<small>{error}</small>
@@ -59,25 +93,25 @@
 		opacity: 0.8;
 		background-color: rgb(26, 26, 176);
 	}
-	.login-wrapper > h2{
-    font-size: 24px;
-    color: #e2eee7;
-    margin-bottom: 20px;
-}
-.text-danger {
-	font-size: 20px;
-    color: yellow;
-    margin-top: 20px;
-}
+	.login-wrapper > h2 {
+		font-size: 24px;
+		color: #e2eee7;
+		margin-bottom: 20px;
+	}
+	.text-danger {
+		font-size: 20px;
+		color: yellow;
+		margin-top: 20px;
+	}
 
 	#passw {
-    width: 100%;
-    height: 48px;
-    padding: 0 10px;
-    box-sizing: border-box;
-    margin-bottom: 16px;
-    border-radius: 6px;
-    background-color: #F8F8F8;
+		width: 100%;
+		height: 48px;
+		padding: 0 10px;
+		box-sizing: border-box;
+		margin-bottom: 16px;
+		border-radius: 6px;
+		background-color: #f8f8f8;
 	}
 	/* form {
 		width: 100%;
@@ -95,12 +129,11 @@
 		display: flex;
 	}
 
-	.btns>button {
+	.btns > button {
 		color: #fff;
-    font-size: 16px;
-    background-color: #6A24FE;
+		font-size: 16px;
+		background-color: #6a24fe;
 		border-radius: 6px;
-
 	}
 	/* .btns::after {
     content: "";
