@@ -183,7 +183,7 @@
     background-color: #ddd;
   }
 
-  .svcid, .svckor, .svceng {
+  .usrdesc {
     word-break:break-all;
   }
 </style>

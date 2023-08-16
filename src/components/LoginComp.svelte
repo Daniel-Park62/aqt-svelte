@@ -1,6 +1,6 @@
 <script>
 	import { getCheckPass, isLogged } from "../aqtstore";
-
+	
 	const imgUrl = new URL("/images/Logo.png", import.meta.url).href;
 	let password = "";
 	let usrid = "";
@@ -19,8 +19,17 @@
 		}
 	}
 
+	function str2buf(str) {
+		var buf = new ArrayBuffer(str.length*2); // 2 bytes for each char
+      var bufView = new Uint8Array(buf);
+      for (var i=0, strLen=str.length; i < strLen; i++) {
+        bufView[i] = str.charCodeAt(i);
+      }
+      return buf;
+	}
+	
 	async function login3() {
-		console.log( password, usrid);
+
 		fetch("/logonchk", {
 			method: "POST",
 			headers: {
@@ -34,13 +43,14 @@
 					Buffer.from(password, "utf8").toString("base64"),
 				usrid:
 					Math.floor(Math.random() * 10) +
-					Buffer.from(password, "utf8").toString("base64"),
+					Buffer.from(usrid, "utf8").toString("base64"),
 			}),
 		})
 			.then(async (res) => {
 				const data = await res.json();
+				// console.log(data) ;
 				if (data.chk) {
-					$isLogged = 2;
+					$isLogged = (data.admin == '1' ? 2 : 1) ;
 					if (error) error = "";
 				} else {
 					error = "비밀번호가 맞지않습니다.";
@@ -58,9 +68,11 @@
 
 <div class="login-wrapper">
 	<img src={imgUrl} alt="" />
-	<h2>비밀번호</h2>
-	<form on:submit|preventDefault={login} id="login-form">
-		<input bind:value={usrid} />
+	<form on:submit|preventDefault={ login3 } id="login-form">
+		<h2>사용자ID</h2>
+		<input class="form-control" bind:value={usrid} />
+		
+		<h2>비밀번호</h2>
 		<input
 			type="password"
 			class="form-control"
@@ -68,8 +80,8 @@
 			bind:value={password}
 		/>
 		<div class="btns">
-			<button type="submit" class="btn1">관리자로그인</button>
-			<button on:click={login3} class="btn2">일반사용자</button>
+			<button type="submit" class="btn1">로그인</button>
+			<!-- <button on:click={login3} class="btn2">일반사용자</button> -->
 		</div>
 		<div id="error_message" class="text-danger">
 			<small>{error}</small>
@@ -93,7 +105,7 @@
 		opacity: 0.8;
 		background-color: rgb(26, 26, 176);
 	}
-	.login-wrapper > h2 {
+	h2 {
 		font-size: 24px;
 		color: #e2eee7;
 		margin-bottom: 20px;
@@ -104,7 +116,7 @@
 		margin-top: 20px;
 	}
 
-	#passw {
+	.form-control {
 		width: 100%;
 		height: 48px;
 		padding: 0 10px;
@@ -125,13 +137,14 @@
 
 	.btns {
 		margin-top: 30px;
-		width: fit-content;
+		/* width: fit-content; */
 		display: flex;
+		justify-content: center;
 	}
 
 	.btns > button {
 		color: #fff;
-		font-size: 16px;
+		font-size: 24px;
 		background-color: #6a24fe;
 		border-radius: 6px;
 	}
