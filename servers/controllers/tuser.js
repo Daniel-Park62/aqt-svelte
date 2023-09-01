@@ -10,33 +10,36 @@ router.get('/', function (req, res, next) {
 });
 
 router.post('/', async function (req, res, next) {
-  let msg = {message:'post:'} ;
-  let qstr = 'REPLACE INTO taqtuser ' +
-    ' (pkey, usrid, host, usrdesc, admin, apps) ' +
-    'VALUES (?, ?, ?, ?, ?, ? ) ';
-  if (req.body.upd.length > 0) {
-    aqtdb.batch(qstr, req.body.upd)
-      .then(r => msg.message += r.affectedRows + " 건 수정되었음\r")
-      .catch(e => { next(new Error(e.message)) });
+  
+  let msg = { message: 'post:' };
+  let qstr = 'UPDATE taqtuser ' +
+    ' SET usrid=?, host=?, usrdesc=?, admin=?, apps=? WHERE pkey = ? ' ;
+  try {
+    if (req.body.upd.length > 0) {
+      const r = await aqtdb.batch(qstr, req.body.upd);
+      msg.message += r.affectedRows + " 건 수정되었음\r";
+    }
+
+    if (req.body.ins.length > 0) {
+      qstr = 'INSERT INTO taqtuser ' +
+        ' ( usrid, host, usrdesc, admin, apps ) ' +
+        "VALUES ( ?, ?, ?, ?,?  ) ";
+      const r = await aqtdb.batch(qstr, req.body.ins);
+      msg.message += r.affectedRows + " 건 등록되었습니다.";
+    }
+    res.status(201).send(msg);
+  } catch (e) {
+    next(new Error(e.message));
   }
-  if (req.body.ins.length > 0) {
-    qstr = 'INSERT INTO taqtuser ' +
-      ' ( usrid, host, usrdesc, admin, apps ) ' +
-      'VALUES ( ?, ?, ?, ?,?  ) ';
-    aqtdb.batch(qstr, req.body.ins)
-      .then(r => msg.message += r.affectedRows + " 건 등록되었습니다." )
-      .catch(e => { next(new Error(e.message)) });
-  } 
-  
-  res.status(201).send(msg);
-  
+
+
 });
 
 router.post('/pass', async function (req, res, next) {
-  const qstr = 'update set pass1 = passwd(?) where pkey = ? and pass1 = ? ' ;
-  aqtdb.query(qstr,req.body.data)
-  .then(r => res.status(201).send(r))
-  .catch(e => { next(new Error(e.message)) });
+  const qstr = 'update set pass1 = passwd(?) where pkey = ? and pass1 = ? ';
+  aqtdb.query(qstr, req.body.data)
+    .then(r => res.status(201).send(r))
+    .catch(e => { next(new Error(e.message)) });
 });
 
 router.delete('/', function (req, res, next) {

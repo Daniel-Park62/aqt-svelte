@@ -8,14 +8,14 @@
 	import TrList from "./components/TrList.svelte";
 	import TexecJob from "./components/TexecJob.svelte";
 	import LoginComp from "./components/LoginComp.svelte";
-	import { isLogged, setCheckPass } from "./aqtstore";
+	import { isLogged, authApps } from "./aqtstore";
   import RegService from "./components/RegService.svelte";
   import RegUser from "./components/RegUser.svelte";
-	onMount(async () => {
-		const res = await fetch("/dashboard/testPassword");
-		const row = await res.json();
-		if (res.ok) setCheckPass(row[0].pass1);
-	});
+	// onMount(async () => {
+	// 	const res = await fetch("/dashboard/testPassword");
+	// 	const row = await res.json();
+	// 	if (res.ok) setCheckPass(row[0].pass1);
+	// });
 
 	let mitems = [
 		{ nm: "총괄 현황", url: "dashboard", cnm: DashBoard },

@@ -1,4 +1,5 @@
 <script>
+    import { authApps } from "../aqtstore.js";
   import { getComparator, formatDate, formatDateTime } from "../helpers.js";
   import DetailTR from "./DetailTR.svelte";
 
@@ -22,7 +23,8 @@
     psize: 20,
     cond: "",
     uri: "",
-    task:""
+    task:"",
+    apps:""
   };
 
   let rdata = Promise.resolve([]);
@@ -37,6 +39,7 @@
     // console.log("entr ...", conds) ;
     if (conds.tcode == undefined) return Promise.resolve([]);
     pg = conds.page + 1  ;
+    conds.apps = $authApps ;
     const res = await fetch("/trlist", {
       method: "POST",
       headers: {

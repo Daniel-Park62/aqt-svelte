@@ -16,8 +16,8 @@
   ];
 
   function updService() {
-    const upds = rdata.filter((r) => ( r[0] && r[1] != 0) ).map((r) => r.slice(1,7));
-    const inss = rdata.filter((r) => ( r[0] && r[1] == 0) ).map((r) => r.slice(2,7));
+    const upds = rdata.filter((r) => ( r[0] && r[1] != 0) ).map((r) => [...(r.slice(2,7)),r[1] ]);
+    const inss = rdata.filter((r) => ( r[0] && r[1] == 0) ).map((r) => r.slice(2,7) );
   console.log(inss)     ;
     fetch("/tuser", {
       method: "POST" ,

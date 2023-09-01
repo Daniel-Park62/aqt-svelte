@@ -1,7 +1,9 @@
 <script>
-	import { getCheckPass, isLogged } from "../aqtstore";
-	
+	import { authApps, isLogged } from "../aqtstore";
+	import ChangePass from "./ChangePass.svelte";
+
 	const imgUrl = new URL("/images/Logo.png", import.meta.url).href;
+	let showModal = false;
 	let password = "";
 	let usrid = "";
 	let error = "";
@@ -19,17 +21,7 @@
 		}
 	}
 
-	function str2buf(str) {
-		var buf = new ArrayBuffer(str.length*2); // 2 bytes for each char
-      var bufView = new Uint8Array(buf);
-      for (var i=0, strLen=str.length; i < strLen; i++) {
-        bufView[i] = str.charCodeAt(i);
-      }
-      return buf;
-	}
-	
 	async function login3() {
-
 		fetch("/logonchk", {
 			method: "POST",
 			headers: {
@@ -48,9 +40,11 @@
 		})
 			.then(async (res) => {
 				const data = await res.json();
-				// console.log(data) ;
-				if (data.chk) {
-					$isLogged = (data.admin == '1' ? 2 : 1) ;
+				if (data.hg == 0) error = "허가되지않은 IP.";
+				else if (data.chk) {
+					$isLogged = data.admin == "1" ? 2 : 1;
+					$authApps = data.apps ;
+					
 					if (error) error = "";
 				} else {
 					error = "비밀번호가 맞지않습니다.";
@@ -68,10 +62,10 @@
 
 <div class="login-wrapper">
 	<img src={imgUrl} alt="" />
-	<form on:submit|preventDefault={ login3 } id="login-form">
+	<form on:submit|preventDefault={() => {}} id="login-form">
 		<h2>사용자ID</h2>
 		<input class="form-control" bind:value={usrid} />
-		
+
 		<h2>비밀번호</h2>
 		<input
 			type="password"
@@ -80,14 +74,17 @@
 			bind:value={password}
 		/>
 		<div class="btns">
-			<button type="submit" class="btn1">로그인</button>
-			<!-- <button on:click={login3} class="btn2">일반사용자</button> -->
+			<button on:click={login3} class="btn1">로그인</button>
+			<button on:click={() => (showModal = true)} class="btn2"
+				>비밀번호변경</button
+			>
 		</div>
 		<div id="error_message" class="text-danger">
 			<small>{error}</small>
 		</div>
 	</form>
 </div>
+<ChangePass bind:showModal {usrid} />
 
 <style>
 	.login-wrapper {
@@ -144,7 +141,7 @@
 
 	.btns > button {
 		color: #fff;
-		font-size: 24px;
+		font-size: 20px;
 		background-color: #6a24fe;
 		border-radius: 6px;
 	}

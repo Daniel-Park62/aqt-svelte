@@ -8,7 +8,7 @@
   let deldata_dtl = [];
   let datadtl = [];
   let newRow = [...columns];
-  let newRow_dtl = [...columns_dtl];
+  let newRow_dtl = [0, ...columns_dtl];
 
   let promise = Promise.resolve([]);
   let promise_dtl = Promise.resolve([]);
@@ -19,9 +19,9 @@
     newRow = columns;
   }
   function addRow_dtl() {
-    newRow_dtl[0] = appid;
+    newRow_dtl[1] = appid;
     datadtl = [...datadtl, [...newRow_dtl]];
-    newRow_dtl = [...columns_dtl];
+    newRow_dtl = [0, ...columns_dtl];
   }
 
   function deleteRow(rowToBeDeleted) {
@@ -40,19 +40,20 @@
     } else {
       datadtl = Promise.resolve([]);
     }
-    newRow_dtl = [...columns_dtl];
+    newRow_dtl = [0, ...columns_dtl];
     return datadtl;
   }
 
   $: promise = data;
-  $: promise_dtl =  getApphost(appid);
-  $: promise_dtl =  datadtl;
+  $: promise_dtl = getApphost(appid);
+  $: promise_dtl = datadtl;
 
   async function getData() {
     const res = await fetch("/regapp");
     data = await res.json();
     deldata = [];
     deldata_dtl = [];
+    if (data.length > 0) appid = data[0][0] ;
   }
   function delApp() {
     // let udata = [];
@@ -80,7 +81,7 @@
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        values: deldata_dtl.map(([e1]) => e1),
+        values: deldata_dtl.map((r) => r[0]),
       }),
     }).catch((err) => {
       throw err;
@@ -90,7 +91,7 @@
   function updApp() {
     // let udata = [];
     // data.forEach(r => { console.log(r) ; udata.push(r) } ) ;
-    updAppHost() ;
+    updAppHost();
     if (deldata.length) delApp();
 
     fetch("/regapp", {
@@ -193,13 +194,9 @@
     {:then rows}
       {#each rows as row}
         <tr>
-          {#each row as cell, i}
-            {#if i != 0}
-              <td contenteditable="true" bind:textContent={cell} />
-            {:else}
-              <td contenteditable="false" bind:textContent={cell} />
-            {/if}
-          {/each}
+          <td contenteditable="false" bind:textContent={row[1]} />
+          <td contenteditable="true" bind:textContent={row[2]} />
+          <td contenteditable="true" bind:textContent={row[3]} />
           <td><button on:click={() => deleteRow_dtl(row)}>X</button></td>
         </tr>
       {/each}
@@ -207,13 +204,9 @@
       <p>{error.message}</p>
     {/await}
     <tr style="color: grey">
-      {#each newRow_dtl as col, i}
-        {#if i != 0}
-          <td contenteditable="true" bind:textContent={col} />
-        {:else}
-          <td contenteditable="false" bind:textContent={col} />
-        {/if}
-      {/each}
+      <td contenteditable="false" bind:textContent={newRow_dtl[1]} />
+      <td contenteditable="true" bind:textContent={newRow_dtl[2]} />
+      <td contenteditable="true" bind:textContent={newRow_dtl[3]} />
       <td><button on:click={addRow_dtl}>add</button></td>
     </tr>
   </table>
