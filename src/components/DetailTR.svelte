@@ -7,6 +7,8 @@
   let cdata;
   let odata = { ok: false, display: "none" };
 
+  let encd = 'UTF-8' ;
+
   $: if (modal) modal.style.display = vid;
   $: cdata = getDetail(pid);
 
@@ -136,12 +138,12 @@
               </div>
               <div class="ny3">
                 <span>수신헤더</span> <br />
-                <textarea readonly rows="8">{row.rhead}</textarea>
+                <textarea readonly rows="5">{row.rhead}</textarea>
               </div>
               <div class="ny3">
                 <span>{"수신데이터 : " + row.rlen.toLocaleString("ko-KR")}</span
                 ><br />
-                <textarea readonly rows="8" cols="120">{row.rdata}</textarea>
+                <textarea readonly rows="8" cols="120">{row.rdata.toString()}</textarea>
               </div>
             </div>
           {/each}
@@ -179,7 +181,7 @@
               </div>
               <div class="ny3">
                 <span>수신헤더</span> <br />
-                <textarea readonly rows="8">{odata.row.rhead}</textarea>
+                <textarea readonly rows="5">{odata.row.rhead}</textarea>
               </div>
               <div class="ny3">
                 <span

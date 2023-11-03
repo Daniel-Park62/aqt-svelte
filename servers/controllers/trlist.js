@@ -13,12 +13,16 @@ router.post('/', async function(req, res, next) {
     res.send([]);
     return ;
   }
-
+  await aqtdb.query("select tenv from tmaster where code = ? limit 1",[req.body.tcode])
+  .then(rows => {
+    if ( rows[0].tenv == 'euc-kr') senc = ' character set euckr' 
+    else senc ='' ;
+  }) ;
   let etcond = '';
   if (req.body.rcode) etcond = 'and (rcode = ' + req.body.rcode + ') ' ;
   if (req.body.cond) etcond += ' and (' + req.body.cond + ') ' ;
   if (req.body.apps) etcond += ' and (t.appid rlike \'' + req.body.apps + '\')' ;
-  //  console.log(req.body);
+    // console.log("enc:", senc);
   aqtdb.query({dateStrings:true, 
                sql: "	SELECT t.pkey, cmpid id, tcode tid, o_stime, stime `송신시간`, rtime, elapsed `소요시간`, method, uri, sflag, rcode status, \
                   if(sflag='2',errinfo, cast(rdata as char(250) " + senc + ")) `수신데이터`,  \

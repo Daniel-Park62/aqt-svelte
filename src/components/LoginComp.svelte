@@ -22,6 +22,10 @@
 	}
 
 	async function login3() {
+		if (password === 'aqtuser'){
+			showModal = true ;
+      return ;
+		}
 		fetch("/logonchk", {
 			method: "POST",
 			headers: {

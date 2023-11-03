@@ -4,7 +4,7 @@ const aqtdb = require('../db/dbconn');
 
 async function getUser(uid, pass, ip) {
   // console.log(uid, pass, ip);
-  const rows = await aqtdb.query({ sql: "select if( PASSWORD(?) = pass1, 1,0) c1, if(? rlike host,1,0) c2 FROM taqtuser where usrid = ? " }
+  const rows = await aqtdb.query({ sql: "select if( PASSWORD(?) = pass1, 1,0) c1, if(? like host,1,0) c2 FROM taqtuser where usrid = ? " }
     , [pass, ip, uid]);
   // .then(rows => {
   // console.log(rows[0]);

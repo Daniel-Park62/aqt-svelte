@@ -133,7 +133,7 @@
             <td><input type="checkbox" bind:checked={row[0]} /></td>
             <td class="appid" >{row[2]}</td>
             {#if row[1] === 0}
-            <td class="svcid" contenteditable="true" style="width:20rem" bind:textContent={row[3]}/>
+            <td class="svcid" contenteditable="true" style="width:20rem ;text-align:left" bind:textContent={row[3]}/>
             {:else}
             <td class="svcid" style="width:20rem">{row[3]}</td>
             {/if}
@@ -143,7 +143,7 @@
               style="width:20%"
               bind:textContent={row[4]}/>
             <td contenteditable="true" bind:textContent={row[5]} class="svceng" style="width:20%" />
-            <td contenteditable="true" class="task" bind:textContent={row[6]}/>
+            <td contenteditable="flase" class="task" bind:textContent={row[6]}/>
             <td contenteditable="true" class="manager" bind:textContent={row[7]}/>
             <td contenteditable="true" class="svckind" bind:textContent={row[8]} />
             {#if curRow === row}

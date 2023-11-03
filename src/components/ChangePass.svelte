@@ -13,6 +13,10 @@
       alert("비밀번호 확인값이 다릅니다.");
       return ;
     }
+    if (! /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,}$/.test(npass1)) {
+      alert("영숫자 및 특수문자를 포함하여 8자리이상이어야 합니다.");
+      return ;
+    }
     fetch("/logonchk/cp", {
       method: "POST",
       headers: {

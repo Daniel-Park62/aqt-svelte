@@ -10,7 +10,7 @@
   let jobnm = "등록" ;
   let copytr = "copytr" ;
   let curRow = {};
-  
+  let encv = false ;  
   let lvl, ttype, desc1, cmpCode ='', tdate, endDate, tdir=null, tuser=null, thost, tport, tenv='';
   const columns = [
     " ",
@@ -23,6 +23,7 @@
     "종료일",
     "대상서버",
     "대상Port",
+    "encode",
     "데이터건수",
   ];
 
@@ -43,7 +44,7 @@
         "endDate":curRow.endDate,
         "thost":curRow.thost ?? '',
         "tport":curRow.tport ?? 0,
-        "tenv":curRow.tenv ?? '',
+        "tenv":encv ? 'euc-kr' : '',
         "tdir":curRow.tdir ?? '',
         "tuser":curRow.tuser ?? ''
       })
@@ -150,6 +151,7 @@
             on:dblclick={() => {
               // copyRow(row) ;
               curRow = row ;
+              encv = curRow.tenv === 'euc-kr';
               jobnm = "수정";
               getModal().open({},'50','60') ;
             }}
@@ -164,6 +166,7 @@
             <td class="endDate">{row.endDate === null ? "" : row.endDate}</td>
             <td class="thost">{row.thost}</td>
             <td class="tport">{row.tport}</td>
+            <td class="tenv">{row.tenv}</td>
             <td class="cnt" style="text-align:right">{row.data_cnt.toLocaleString("ko-KR")}</td>
             {#if (curRow === row)}
             <td>◀</td>
@@ -199,6 +202,10 @@
       <div class="item in_label">테스트시작일:</div><div><input class="item in_value" type="date" bind:value={curRow.tdate}></div>
       <div class="item in_label">대상서버:</div><div><input class="item in_value" bind:value={curRow.thost}></div>
       <div class="item in_label">대상Port:</div><div><input class="item in_value" type="number" min="2" max="65535" bind:value={curRow.tport}></div>
+      <label class="item in_label">
+        <input type="checkbox" bind:checked={encv} />
+         EUC-KR
+      </label>
     </div>
     <hr>
     <div>
