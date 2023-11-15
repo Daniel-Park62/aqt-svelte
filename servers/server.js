@@ -19,6 +19,7 @@ const tservice = require('./controllers/tservice') ;
 const texecjob = require('./controllers/texecjob') ;
 const logonchk = require('./controllers/logonchk') ;
 const tuser = require('./controllers/tuser') ;
+const trequest = require('./controllers/trequest') ;
 
 app.use(cors());
 
@@ -38,6 +39,7 @@ app.use('/tmaster', tmaster) ;
 app.use('/tservice', tservice) ;
 app.use('/texecjob', texecjob) ;
 app.use('/tuser', tuser) ;
+app.use('/trequest', trequest) ;
 
 app.listen(port,'0.0.0.0', () => {
    console.log(`Server is up at port ${port}`);

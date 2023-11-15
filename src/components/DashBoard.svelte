@@ -9,8 +9,9 @@
   async function getdata() {
 //    try { 
      const res = await fetch("/dashboard/summary") ;
-     let datas = await res.json();
 
+     let datas = await res.json();
+  
      if (res.ok) {
        return datas;
      } else {
@@ -57,14 +58,14 @@
       <div class="items">
         <div class="item1 item">
           <div>전체누적진척율</div>
-          <div class="per">{(datas.rows[1].svc_cnt * 100 / datas.svccnt).toFixed(2) }%</div>
+          <div class="per">{((datas.rows[1].svc_cnt ?? 0) * 100 / datas.svccnt).toFixed(2) }%</div>
           <span class="lbl">대상서비스 :</span><span>{datas.svccnt.toLocaleString("ko-KR")}</span><br>
           <span class="lbl">진행건수   :</span><span>{(datas.rows[1].svc_cnt *1).toLocaleString("ko-KR")}</span>
         </div>
 
         <div class="item2 item">
           <div>테스트성공률</div>
-          <div class="per">{(datas.rows[1].scnt * 100 / datas.rows[1].data_cnt).toFixed(2) }%</div>
+          <div class="per">{((datas.rows[1].scnt || 0) * 100 / (datas.rows[1].data_cnt || 1)).toFixed(2) }%</div>
           <span class="lbl">수행건수 :</span><span>{( datas.rows[1].data_cnt * 1).toLocaleString("ko-KR") }</span><br>
           <span class="lbl">성공건수 :</span><span>{(datas.rows[1].scnt * 1).toLocaleString("ko-KR")}</span>
         </div>

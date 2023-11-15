@@ -6,6 +6,7 @@ let aqtpass = 'abcd';
 export const gtcode = writable(value) ;
 export const isLogged = writable(0);
 export const authApps = writable("");
+export const userid = writable("");
 
 export const getCheckPass = async ( password ) => {
 	if ( password === aqtpass )

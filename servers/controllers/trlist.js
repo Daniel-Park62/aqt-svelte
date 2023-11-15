@@ -27,7 +27,7 @@ router.post('/', async function(req, res, next) {
                sql: "	SELECT t.pkey, cmpid id, tcode tid, o_stime, stime `송신시간`, rtime, elapsed `소요시간`, method, uri, sflag, rcode status, \
                   if(sflag='2',errinfo, cast(rdata as char(250) " + senc + ")) `수신데이터`,  \
                   rlen `수신크기`,  date_format(cdate,'%Y-%m-%d %T') cdate \
-                  FROM ttcppacket t join tservice s on (t.uri = s.svcid and t.appid = s.appid) where tcode like ? and t.uri rlike ? and s.task rlike ? " + etcond + " order by o_stime limit ?, ? "
+                  FROM ttcppacket t left join tservice s on (t.uri = s.svcid and t.appid = s.appid) where tcode like ? and t.uri rlike ? and t.appid rlike ? " + etcond + " order by o_stime limit ?, ? "
     }, [ req.body.tcode, req.body.uri ,req.body.task , req.body.page * req.body.psize, +(req.body.psize)  ])
     .then( rows => { return res.json(rows) } ) 
     .catch((e) => { return next(e) });

@@ -55,30 +55,7 @@ router.post('/',async function(req, res, next) {
   }
   let parms = [
     req.body.code,
-    req.body.type,
-    req.body.lvl,
-    req.body.desc1,
-    req.body.cmpCode,
-    req.body.tdate,
-    req.body.endDate,
-    req.body.tdir,
-    req.body.tuser,
-    req.body.thost,
-    req.body.tport,
-    req.body.tenv
-  ] ;
-  const qstr = 'INSERT INTO tmaster ' +
-	             ' (code, type, lvl, desc1, cmpCode, tdate, endDate, tdir, tuser, thost, tport, tenv) ' +
-               'VALUES (?, ?, ?, ?, ?,?,?,?, ?,?,?,? ) ' ;
-  aqtdb.query(qstr, parms)
-  .then(r => res.status(201).send({message: `${req.body.code}` + " 등록되었습니다."}) )
-  .catch(e => { next( new Error(e.message) ) } ) ;           
-
-});
-
-router.put('/',function(req, res, next) {
-  let parms = [
-    req.body.type,
+    req.body.appid,
     req.body.lvl,
     req.body.desc1,
     req.body.cmpCode,
@@ -89,10 +66,35 @@ router.put('/',function(req, res, next) {
     req.body.thost,
     req.body.tport,
     req.body.tenv,
+    req.body.pro
+  ] ;
+  const qstr = 'INSERT INTO tmaster ' +
+	             ' (code, appid, lvl, desc1, cmpCode, tdate, endDate, tdir, tuser, thost, tport, tenv,pro) ' +
+               'VALUES (?, ?, ?, ?, ?,?,?,?, ?,?,?,? ,?) ' ;
+  aqtdb.query(qstr, parms)
+  .then(r => res.status(201).send({message: `${req.body.code}` + " 등록되었습니다."}) )
+  .catch(e => { next( new Error(e.message) ) } ) ;           
+
+});
+
+router.put('/',function(req, res, next) {
+  let parms = [
+    req.body.appid,
+    req.body.lvl,
+    req.body.desc1,
+    req.body.cmpCode,
+    req.body.tdate,
+    req.body.endDate,
+    req.body.tdir,
+    req.body.tuser,
+    req.body.thost,
+    req.body.tport,
+    req.body.tenv,
+    req.body.pro,
     req.body.code
   ] ;
   const qstr = 'UPDATE tmaster SET ' +
-	             ' `type`=?, lvl=?, desc1=?, cmpCode=?, tdate=?, endDate=?, tdir=?, tuser=?, thost=?, tport=?, tenv=? ' +
+	             ' `appid`=?, lvl=?, desc1=?, cmpCode=?, tdate=?, endDate=?, tdir=?, tuser=?, thost=?, tport=?, tenv=?,pro=? ' +
                ' WHERE CODE = ?';
   aqtdb.query(qstr, parms)
   .then(r => res.status(201).send({message: `${req.body.code}` + " 수정되었습니다."}) )

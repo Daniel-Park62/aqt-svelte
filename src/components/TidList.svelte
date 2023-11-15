@@ -1,4 +1,5 @@
 <script>
+  import { authApps } from "../aqtstore.js";
   import { onMount } from "svelte";
   import { getLvlnm} from "./Common.svelte";
   import Trtable from "./Trtable.svelte";
@@ -17,7 +18,7 @@
 
   let promise = Promise.resolve([]);
   async function getdata() {
-      const res = await fetch( "/dashboard");
+      const res = await fetch( "/dashboard/list/"+$authApps);
       promise = await res.json();
 //      console.log(" call dashboard end", promise) ;
   }

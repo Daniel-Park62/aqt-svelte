@@ -14,15 +14,15 @@ import {onDestroy} from 'svelte'
 let topDiv
 let visible=false
 let prevOnTop
-let closeCallback
+let closeCallback = null;
 let w = 90;
 let h = 90;
 
-export let id=''
+export let id='' ;
 
 function keyPress(ev){
 	//only respond if the current modal is the top one
-	if(ev.key=="Escape" && onTop==topDiv) close() //ESC
+	if(ev.key=="Escape" && onTop==topDiv) close() ; //ESC
 }
 
 /**  API **/
@@ -40,26 +40,26 @@ function open(callback, wd,he){
 	//this prevents scrolling of the main window on larger screens
 	document.body.style.overflow="hidden" 
 
-	visible=true
+	visible=true ;
 	//Move the modal in the DOM to be the last child of <BODY> so that it can be on top of everything
-	document.body.appendChild(topDiv)
+	document.body.appendChild(topDiv) ;
 }
 	
 function close(retVal=''){
-	if(!visible) return
-	window.removeEventListener("keydown",keyPress)
-	onTop=prevOnTop
-	if(onTop==null) document.body.style.overflow=""
-	visible=false
-	if(closeCallback) closeCallback(retVal)
+	if(!visible) return ;
+	window.removeEventListener("keydown",keyPress) ;
+	onTop=prevOnTop ;
+	if(onTop==null) document.body.style.overflow="" ;
+	visible=false ;
+	if(typeof closeCallback == "function") closeCallback(retVal) ;
 }
 	
 //expose the API
-modals[id]={open,close}
+modals[id]={open,close} ;
 	
 onDestroy(()=>{
-	delete modals[id]
-	window.removeEventListener("keydown",keyPress)
+	delete modals[id] ;
+	window.removeEventListener("keydown",keyPress) ;
 })
 	
 </script>

@@ -1,5 +1,5 @@
 <script>
-
+ import { authApps, userid } from "../aqtstore.js";
   export let vid = "none";
   export let pid = 0;
 
@@ -11,6 +11,29 @@
 
   $: if (modal) modal.style.display = vid;
   $: cdata = getDetail(pid);
+
+  async function reSend(row) {
+    
+    fetch("/trequest", {
+      method: "POST" ,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ insdata : [
+        row.pkey,
+        row.cmpid,
+        row.tcode,
+        $userid
+      ]})
+    })
+      .then(async (res) => {
+        let rmsg = await res.json();
+        alert(rmsg.message);
+      })
+      .catch((err) => {
+        alert("error:" + err.message);
+      });
+  }
 
   async function getDetail(pid) {
     const res = await fetch("/trlist/" + pid);
@@ -90,6 +113,7 @@
         <div class="ny1">
           <span class="title">{" 전문ID : " + rows[0].cmpid} </span>
           <nav>
+            <button on:click={async () => reSend(rows[0])}>재전송</button>
             <button on:click={async () => getNext(rows[0].pkey)}>다음</button>
             <button on:click={async () => getPrev(rows[0].pkey)}>이전</button>
             <button

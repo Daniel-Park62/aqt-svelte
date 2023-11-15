@@ -1,5 +1,5 @@
 <script>
-	import { authApps, isLogged } from "../aqtstore";
+	import { authApps, isLogged,userid } from "../aqtstore";
 	import ChangePass from "./ChangePass.svelte";
 
 	const imgUrl = new URL("/images/Logo.png", import.meta.url).href;
@@ -48,6 +48,7 @@
 				else if (data.chk) {
 					$isLogged = data.admin == "1" ? 2 : 1;
 					$authApps = data.apps ;
+					$userid = usrid ;
 					
 					if (error) error = "";
 				} else {
