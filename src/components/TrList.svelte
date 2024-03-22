@@ -1,5 +1,6 @@
 <script>
   import { onMount } from "svelte";
+  import { userid,authApps } from "../aqtstore.js";
 //   import { getComparator, formatDate, formatDateTime } from "../helpers.js";
 // import { bind } from "svelte/internal";
 // import DetailTr from "./DetailTR.svelte";
@@ -15,7 +16,7 @@ import Trtable from "./Trtable.svelte";
     psize: 20,
     cond: "",
     uri: "",
-    task:""
+    apps:""
   };
 
   let tcodelist = [];
@@ -25,8 +26,41 @@ import Trtable from "./Trtable.svelte";
     conds.tcode = selected.code ;
   }
 
+  async function getDownLoad() {
+    // console.log("entr ...", conds) ;
+    conds.tcode = selected.code ;
+
+    conds.apps = $authApps ;
+    const res = await fetch("/tresult", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(conds),
+    });
+    if (res.ok) {
+//      rdata = await res.json();
+      const file = await res.blob(); 
+      const downloadUrl = window.URL.createObjectURL(file); // 해당 file을 가리키는 url 생성
+ 
+      const anchorElement = document.createElement('a');
+      document.body.appendChild(anchorElement);
+      anchorElement.download = conds.tcode; // a tag에 download 속성을 줘서 클릭할 때 다운로드가 일어날 수 있도록 하기
+      anchorElement.href = downloadUrl; // href에 url 달아주기
+ 
+      anchorElement.click(); // 코드 상으로 클릭을 해줘서 다운로드를 트리거
+ 
+      document.body.removeChild(anchorElement); // cleanup - 쓰임을 다한 a 태그 삭제
+      window.URL.revokeObjectUrl(downloadUrl); // cleanup - 쓰임을 다한 url 객체 삭제
+
+    } else {
+      // rdata = Promise.resolve([]);
+      throw new Error(res);
+    }
+  }
+
   onMount(async () => {
-    const res = await fetch( "/tmaster/tsellist" ) ;
+    const res = await fetch( "/tmaster/tsellist/"+$userid ) ;
     tcodelist = await res.json(); 
     tcodelist.push({code:'%',name:'ALL'});
     selected = tcodelist[0];
@@ -50,6 +84,7 @@ import Trtable from "./Trtable.svelte";
     <span class="number-in">응답코드 : <input  type="number" bind:value={conds.rcode} /></span>
     <span>기타 : <input type="text" bind:value={conds.cond} /></span>
     <button on:click={getTRlistm}>조회</button>
+    <button on:click={getDownLoad}>CSV</button>
 
   </div>
   <div class="fitem">

@@ -1,6 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  import { gtcode } from "../aqtstore";
+  import { gtcode,userid } from "../aqtstore";
   import {
     getLvlnm,
     getLvls,
@@ -285,7 +285,7 @@
   </div>
 </Modal>
 <Modal bind:id={copytr}>
-  <CopyTr on:click={() => getModal(copytr).close()} />
+  <CopyTr tlist={[]} on:click={() => getModal(copytr).close()} />
 </Modal>
 
 <style>
@@ -353,5 +353,9 @@
 
   tbody tr:hover {
     background-color: #ddd;
+  }
+  .tmasterList {
+    max-height: 80vh;
+    overflow-y: auto;
   }
 </style>

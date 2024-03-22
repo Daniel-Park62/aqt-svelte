@@ -105,11 +105,10 @@
             <td><input type="checkbox" bind:checked={row[0]} /></td>
             {#if row[1] === 0}
             <td class="usrid" contenteditable="true" style="width:10rem" bind:textContent={row[2]}/>
-            <td class="host" contenteditable="true" style="width:15rem" bind:textContent={row[3]}/>
             {:else}
             <td class="usrid" style="width:10rem">{row[2]}</td>
-            <td class="host" style="width:15rem">{row[3]}</td>
             {/if}
+            <td class="host" contenteditable="true" style="width:15rem" bind:textContent={row[3]}/>
             <td contenteditable="true" class="usrdesc" style="width:20%" bind:textContent={row[4]}/>
             <td><input type="checkbox" bind:checked={row[5]}/></td> 
             <td contenteditable="true" class="apps" bind:textContent={row[6]}/>

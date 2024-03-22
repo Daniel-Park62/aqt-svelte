@@ -75,8 +75,8 @@
   {:catch error}
     <p style="color: red">{error.message}</p>
   {/await}
+  <div class="tlist"><TidList bind:tcode /></div>
 </div>
-<div class="tlist"><TidList bind:tcode /></div>
 
 <style>
   .container, .items {
@@ -126,6 +126,10 @@
   }
   .item .lbl {
     width:6rem;
+  }
+  .tlist {
+    max-height: 70vh;
+    overflow-y: auto;
   }
 
 </style>

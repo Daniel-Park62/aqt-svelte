@@ -36,6 +36,7 @@
   }
 
   async function getDetail(pid) {
+   
     const res = await fetch("/trlist/" + pid);
     return await res.json();
   }
@@ -102,6 +103,49 @@
       vid = "none";
     }
   };
+
+  function trChange(row) {
+    fetch("/trlist/change", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        pkey: row.pkey,
+        sdata: row.sdata
+      }),
+    })
+      .then(async (res) => {
+        let rmsg = await res.json();
+        alert(rmsg.message);
+      })
+      .catch((err) => {
+        alert("error:" + err.message);
+      });
+  }
+  function handleReload() {
+    window.location.reload(true); // Reloads page from server
+    getDetail(pid) ;
+  }
+  function trRedo(row) {
+    fetch("/trlist/redo", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        pkey: row.pkey
+      }),
+    })
+      .then(async (res) => {
+        let rmsg = await res.json();
+        alert(rmsg.message);
+      })
+      .catch((err) => {
+        alert("error:" + err.message);
+      });
+  }
+
 </script>
 
 <!-- The Modal -->
@@ -114,6 +158,7 @@
           <span class="title">{" 전문ID : " + rows[0].cmpid} </span>
           <nav>
             <button on:click={async () => reSend(rows[0])}>재전송</button>
+            <button on:click={async () => getDetail(rows[0].pkey)}>새로고침</button>
             <button on:click={async () => getNext(rows[0].pkey)}>다음</button>
             <button on:click={async () => getPrev(rows[0].pkey)}>이전</button>
             <button
@@ -157,8 +202,11 @@
               <div class="ny3">
                 <br /><span
                   >{"송신데이터 : " + row.slen.toLocaleString("ko-KR")}
-                </span> <br />
-                <textarea readonly rows="8" cols="120">{row.sdata}</textarea>
+                </span>
+                <button on:click={ () => trChange(rows[0])}>송신저장</button>
+                <button on:click={ () => trRedo(rows[0])}>송신원복</button>
+                 <br />
+                <textarea rows="8" cols="120" bind:value={row.sdata} />
               </div>
               <div class="ny3">
                 <span>수신헤더</span> <br />

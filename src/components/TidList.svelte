@@ -89,6 +89,7 @@
     font-family: Arial, Helvetica, sans-serif;
     border-collapse: collapse;
     width: 100%;
+    overflow-y: auto;
   }
 
   .tcode-status td,

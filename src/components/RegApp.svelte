@@ -17,6 +17,7 @@
   function addRow() {
     data = [...data, [...newRow]];
     newRow = columns;
+    newRow[0] = "APPID";
   }
   function addRow_dtl() {
     newRow_dtl[1] = appid;
@@ -170,11 +171,7 @@
     {/await}
     <tr style="color: grey">
       {#each newRow as column, i}
-        {#if i != 0}
           <td contenteditable="true" bind:textContent={column} />
-        {:else}
-          <td contenteditable="false" bind:textContent={column} />
-        {/if}
       {/each}
       <td><button on:click={addRow}>add</button></td>
     </tr>
@@ -214,6 +211,8 @@
 
 <style>
   .container {
+    max-height: 85vh;
+    overflow: auto;
     display: flex;
   }
   .app-tbl {

@@ -1,7 +1,19 @@
 <script>
 	import { authApps, isLogged,userid } from "../aqtstore";
 	import ChangePass from "./ChangePass.svelte";
+	
+/* 	import {setContext }  from "svelte";
 
+	setContext('gettcode', {
+		getTcode: async () => tcodelist 
+	});
+	let tcodelist ;
+	async function getTcodelist() {
+    const res = await fetch("/tmaster/tsellist/"+$userid );
+    tcodelist =   await res.json();
+		console.log(tcodelist);
+  }
+ */
 	const imgUrl = new URL("/images/Logo.png", import.meta.url).href;
 	let showModal = false;
 	let password = "";
@@ -49,7 +61,7 @@
 					$isLogged = data.admin == "1" ? 2 : 1;
 					$authApps = data.apps ;
 					$userid = usrid ;
-					
+//					getTcodelist() ;
 					if (error) error = "";
 				} else {
 					error = "비밀번호가 맞지않습니다.";
@@ -63,6 +75,8 @@
 	async function login2() {
 		$isLogged = 1;
 	}
+
+
 </script>
 
 <div class="login-wrapper">

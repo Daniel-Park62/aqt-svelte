@@ -1,7 +1,10 @@
 <script>
-  import { onMount } from "svelte";
+  import { onMount, getContext } from "svelte";
   import Modal, { getModal } from "./Modal.svelte";
   import CopyTr from "./CopyTr.svelte";
+  import {  userid } from "../aqtstore" ;
+
+  let tcodelist = [] ;
 
   const jobkindnm = {
     0: "패킷캡쳐",
@@ -134,13 +137,12 @@
     }
   }
 
-  let tcodelist = [];
   let selected;
 
   onMount(async () => {
     getdata();
-    const res = await fetch("/tmaster/tsellist");
-    tcodelist = await res.json();
+    const res = await fetch("/tmaster/tsellist/"+$userid );
+    tcodelist =   await res.json();
   });
 </script>
 
@@ -360,7 +362,7 @@
   </div>
 </div>
 <Modal bind:id={copytr}>
-  <CopyTr on:click={() => getModal(copytr).close()} />
+  <CopyTr tlist={tcodelist} on:click={() => getModal(copytr).close()} />
 </Modal>
 
 <style>

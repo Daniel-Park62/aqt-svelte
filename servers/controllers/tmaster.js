@@ -2,11 +2,13 @@ const express = require('express');
 const router = express.Router();
 const aqtdb = require('../db/dbconn') ;
  
-router.get('/tsellist', function(req, res, next) {
+router.get('/tsellist/:uid', function(req, res, next) {
+  let usrid = req.params.uid || '';
 
-  aqtdb.query("	SELECT code, desc1 name, cmpcode,enddate  from tmaster ")
+  aqtdb.query("	SELECT code, desc1 name, cmpcode,enddate  from tmaster m join \
+             (select apps from taqtuser where usrid = ?) u where m.appid rlike u.apps",[usrid])
     .then( rows => res.json(rows) ) 
-    .catch((e) => { return next(e) });
+    .catch((e) => { console.log(e.message);return next(e) });
   
 });
 

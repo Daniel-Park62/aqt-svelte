@@ -20,11 +20,13 @@ const texecjob = require('./controllers/texecjob') ;
 const logonchk = require('./controllers/logonchk') ;
 const tuser = require('./controllers/tuser') ;
 const trequest = require('./controllers/trequest') ;
+const tresult = require('./controllers/tresult') ;
 
 app.use(cors());
 
-// console.log(__dirname);
-app.use(express.static('public'));
+console.log(__dirname);
+app.use(express.static(path.join(__dirname, "../public")));
+//app.use(express.static('public'));
 app.get('/', (req, res) => {
    res.sendFile(path.resolve(__dirname, '../public', 'index.html'));
 });
@@ -40,6 +42,7 @@ app.use('/tservice', tservice) ;
 app.use('/texecjob', texecjob) ;
 app.use('/tuser', tuser) ;
 app.use('/trequest', trequest) ;
+app.use('/tresult', tresult) ;
 
 app.listen(port,'0.0.0.0', () => {
    console.log(`Server is up at port ${port}`);

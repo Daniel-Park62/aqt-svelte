@@ -1,9 +1,10 @@
 
 <script>
-  import { onMount,onDestroy } from "svelte";
-  import { gtcode } from "../aqtstore" ;
+  import { onMount,onDestroy, afterUpdate } from "svelte";
+  import { gtcode, userid } from "../aqtstore" ;
+  
   let tlist_org = [];
-  let tlist = [];
+  export let tlist ;
   let conds = {
     srccode: "",
     dstcode: "",
@@ -45,10 +46,10 @@
   }
 
   onMount(async () => {
-    const res = await fetch( "/tmaster/tsellist" ) ;
+    if (tlist.length == 0) {
+    const res = await fetch( "/tmaster/tsellist/"+$userid ) ;
     tlist = await res.json(); 
-    // const fcode = tlist.match(gtcode)[0] ;
-
+    }
     conds.dstcode =  tlist[0].code ;
     const reso = await fetch( "/tmaster/torglist" ) ;
     tlist_org = await reso.json(); 
