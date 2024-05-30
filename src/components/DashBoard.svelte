@@ -2,13 +2,20 @@
   import { onMount, afterUpdate } from "svelte";
   import TidList from "./TidList.svelte";
   
+  let tick = 0 ;
+  setInterval(() => {
+    tick += 1
+  }, 5000);
+
+  $: getdata(tick) ;
+
   let tcode ;
   let svccnt = 999;
   let promi = Promise.resolve( {svccnt:0, rows:[{lvl:'1',svc_cnt:0 },{lvl:'2',svc_cnt:0}]});
   
   async function getdata() {
 //    try { 
-     const res = await fetch("/dashboard/summary") ;
+     const res = await fetch("/dashboard/summary" ) ;
 
      let datas = await res.json();
   

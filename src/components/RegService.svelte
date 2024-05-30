@@ -8,7 +8,7 @@
   let pkey, svcid, appid, svckor, svceng, svckind, task, manager;
   const columns = [
     " ",
-    "APP ",
+    "APID ",
     "서비스(URI)",
     "서비스명(한글)",
     "서비스명(영문)",
@@ -23,7 +23,7 @@
     fetch("/tservice", {
       method: "POST" ,
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({
         ins: inss
@@ -131,10 +131,11 @@
             on:click={() => (curRow = row)}
           >
             <td><input type="checkbox" bind:checked={row[0]} /></td>
-            <td class="appid" >{row[2]}</td>
             {#if row[1] === 0}
+            <td class="appid" contenteditable="true" bind:textContent={row[2]} />
             <td class="svcid" contenteditable="true" style="width:20rem ;text-align:left" bind:textContent={row[3]}/>
             {:else}
+            <td class="appid" >{row[2]}</td>
             <td class="svcid" style="width:20rem">{row[3]}</td>
             {/if}
             <td

@@ -18,7 +18,7 @@
   <table class="tcode-status">
     <thead>
       <tr>
-        <th>TASK</th>
+        <th>업무명</th>
         <th>단계</th>
         <th>서비스수</th>
         <th>실패서비스</th>

@@ -4,6 +4,13 @@
   import CopyTr from "./CopyTr.svelte";
   import {  userid } from "../aqtstore" ;
 
+  let tick = 0 ;
+  setInterval(() => {
+    tick += 1
+  }, 5000);
+
+  $: getdata(tick) ;
+
   let tcodelist = [] ;
 
   const jobkindnm = {

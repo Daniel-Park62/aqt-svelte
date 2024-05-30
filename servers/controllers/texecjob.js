@@ -13,7 +13,7 @@ router.post('/',async function(req, res, next) {
 
   const qstr = 'INSERT INTO texecjob ' +
 	             ' (jobkind, tcode, tdesc, tnum, dbskip, etc, in_file, reqstartDt, exectype, resultstat, reqnum, repnum,limits) ' +
-               'VALUES (?, ?, ?, ?, ?,?,?,?, ?,?,?,? ) ' ;
+               'VALUES (?, ?, ?, ?, ?,?,?,?, ?,?,?,?,? ) ' ;
   aqtdb.query(qstr, [
     req.body.jobkind, req.body.tcode, req.body.tdesc, req.body.tnum, 
     req.body.dbskip, req.body.etc, req.body.in_file, req.body.reqstartDt,

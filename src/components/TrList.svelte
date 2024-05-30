@@ -64,6 +64,7 @@ import Trtable from "./Trtable.svelte";
     tcodelist = await res.json(); 
     tcodelist.push({code:'%',name:'ALL'});
     selected = tcodelist[0];
+    conds.tcode = selected.code ;
     // promise = Promise.resolve(tcodelist) ;
   });
   
@@ -84,7 +85,7 @@ import Trtable from "./Trtable.svelte";
     <span class="number-in">응답코드 : <input  type="number" bind:value={conds.rcode} /></span>
     <span>기타 : <input type="text" bind:value={conds.cond} /></span>
     <button on:click={getTRlistm}>조회</button>
-    <button on:click={getDownLoad}>CSV</button>
+    <!-- <button on:click={getDownLoad}>CSV</button> -->
 
   </div>
   <div class="fitem">

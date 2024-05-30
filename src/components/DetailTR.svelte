@@ -73,7 +73,8 @@
   async function viewOrig(pid) {
     if (odata.display == "none") {
       odata.display = "block";
-      getOrig(pid);
+      odata.ok = false ;
+      await getOrig(pid);
     } else {
       odata.display = "none";
     }
