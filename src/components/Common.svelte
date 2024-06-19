@@ -25,18 +25,22 @@
     return appids ;
   }
 
-  async function getFirst() {
+  export async function getFirst() {
     const res = await fetch("/regapp");
     if (res.status <= 300) {
       const rdata = await res.json();
       rdata.forEach(r => {
+        if ( appids.findIndex((a) => a.value == r[0]) == -1)
         appids.push( {value:r[0], name:r[0]} );
-      }); 
+      });
     } else {
       throw new Error(res.statusText);
     }
 
   }
   getFirst() ;
+
+</script>
+<script>
 
 </script>

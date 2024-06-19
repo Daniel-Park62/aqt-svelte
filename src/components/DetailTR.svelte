@@ -36,8 +36,9 @@
   }
 
   async function getDetail(pid) {
-   
-    const res = await fetch("/trlist/" + pid);
+    const array = new Uint32Array(1);
+    const nnn = window.crypto.getRandomValues(array)[0] ;
+    const res = await fetch("/trlist/" + pid + `?v=${nnn}`);
     return await res.json();
   }
 
@@ -188,8 +189,8 @@
                       >{row.stime + " ~ " + row.rtime.substring(11)}</td
                     >
                     <td class="lbl">소요시간</td><td>{row.svctime}</td>
-                    <td class="lbl">Destination</td><td
-                      >{row.dstip + ":" + row.dstport}</td
+                    <td class="lbl">Destination</td>
+                    <td>{row.dstip + ":" + row.dstport}</td
                     >
                   </tr>
                   <!-- <tr>
@@ -239,7 +240,8 @@
                     >
                     <td class="lbl">소요시간</td><td>{odata.row.svctime}</td>
                     <td class="lbl">Destination</td><td
-                      >{odata.row.dstip + ":" + odata.row.dstport}</td
+                      >{odata.row.dstip + ":" + odata.row.dstport}
+                    </td
                     >
                   </tr>
                 </table>

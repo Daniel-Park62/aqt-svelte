@@ -1,5 +1,6 @@
 <script>
   import { onMount } from "svelte";
+  import { getFirst } from "./Common.svelte";
 
   let columns = ["APPID", "APP명", "담당자"];
   let columns_dtl = ["APPID", "Host IP", "0"];
@@ -105,15 +106,18 @@
       }),
     })
       .then(async (res) => {
+        getFirst() ;
         let rmsg = await res.json();
         alert(rmsg.message);
         if (res.status < 300) {
           getData();
+//          await setAppid();
         }
       })
       .catch((err) => {
         alert("error:" + err.message);
       });
+      
   }
 
   function updAppHost() {
@@ -134,7 +138,7 @@
     });
   }
 
-  onMount(getData);
+  onMount( getData );
 </script>
 
 <div id="btns" style="display:flex; justify-content: flex-start; ">

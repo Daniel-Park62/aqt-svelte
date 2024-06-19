@@ -15,14 +15,14 @@ router.get('/tsellist/:uid', function(req, res, next) {
 router.get('/torglist', function(req, res, next) {
 
   aqtdb.query("	SELECT tcode, date_format(o_stime,'%Y/%m/%d') sdate FROM tloaddata GROUP BY tcode ")
-    .then( rows => res.json(rows) ) 
+    .then( rows => res.json(rows) )
     .catch((e) => { return next(e) });
   
 });
 
 router.get('/', function(req, res, next) {
   const cond = req.body.cond ? "where " + req.body.cond : "";
-  aqtdb.query("	SELECT a.*, 0 as chk from tmaster a " + cond)
+  aqtdb.query("	SELECT a.*, a.desc1 name, 0 as chk from tmaster a " + cond)
     .then( rows => res.json(rows) ) 
     .catch((e) => { return next(e) });
 });
@@ -106,7 +106,7 @@ router.put('/',function(req, res, next) {
 
 router.delete('/',function(req, res, next) {
   const codes = "('" + req.body.codes.join("', '") + "')" ;
-  console.log(codes) ;
+  // console.log(codes) ;
   const qstr = 'delete from tmaster where code in (?)' ; // + codes;
   aqtdb.query(qstr, [req.body.codes]) 
   .then(r => res.status(201).send(r))

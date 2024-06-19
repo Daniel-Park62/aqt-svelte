@@ -8,11 +8,11 @@
     getTypes,
     getPros,
     getProNm,
-    getAppid,
+    getAppid
   } from "./Common.svelte";
   import Modal, { getModal } from "./Modal.svelte";
   import CopyTr from "./CopyTr.svelte";
-
+  const appids = [] ;
   let rdata = Promise.resolve([]);
   let tcode;
   let jobnm = "등록";
@@ -45,6 +45,7 @@
     "encode",
     "데이터건수",
   ];
+
 
   function updTcode() {
     fetch("/tmaster", {
@@ -84,8 +85,8 @@
   function eraseTr() {
     let codes = rdata.filter((r) => r.chk).map((r) => r.code);
 
-    // console.log(codes);
     if (codes.length == 0) return;
+    if ( ! confirm( codes + " 전문삭제 진행할까요? ") ) return ;
     fetch("/tmaster/erasetr", {
       method: "PUT",
       headers: {
@@ -111,6 +112,7 @@
     const delcodes = rdata.filter((r) => r.chk).map((r) => r.code);
 
     if (delcodes.length == 0) return;
+    if (! confirm( delcodes + " 삭제하시겠습니까?") ) return ;
     // console.log("del code:", delcodes) ;
     fetch("/tmaster", {
       method: "DELETE",
@@ -141,7 +143,7 @@
     }
   }
 
-  onMount(getdata);
+  onMount( getdata );
 </script>
 
 <div id="btns" style="display:flex; justify-content: flex-start; ">
@@ -285,7 +287,7 @@
   </div>
 </Modal>
 <Modal bind:id={copytr}>
-  <CopyTr tlist={[]} on:click={() => getModal(copytr).close()} />
+  <CopyTr tlist={rdata} on:click={() => getModal(copytr).close()} />
 </Modal>
 
 <style>

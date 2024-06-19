@@ -12,7 +12,7 @@
     "Status",
     "수신크기",
     "수신데이터",
-    "TID",
+    "Port",
     "APID",
   ];
   let vid = "none";
@@ -152,7 +152,7 @@
 <div class="fitem tbl" >
   <table style="overflow:scroll">
     <thead>
-      <tr>
+      <tr widh="95%">
         {#each columns as column}
           <th>
             <!--        <Button {sortBy} {column} {sortColumn} {sortDirection} />  -->
@@ -181,7 +181,7 @@
             <td class="rcode">{row.status}</td>
             <td class="rlen">{row.수신크기.toLocaleString("ko-KR")}</td>
             <td class="rhead">{row.수신데이터 === null ? '':row.수신데이터}</td>
-            <td class="tcode">{row.tid}</td>
+            <td class="dstport">{row.dstport}</td>
             <td class="appid">{row.appid}</td>
           </tr>
         {/each}
@@ -195,7 +195,7 @@
 <DetailTR bind:vid bind:pid />
 
 <style>
-  .elapsed, .rlen, .rcode, .method, .tcode {
+  .elapsed, .rlen, .rcode, .method, .dstport, .appid {
     width: 5em;
   }
   .cmpid {

@@ -7,16 +7,19 @@ const fs = require('fs');
 router.post('/', async function(req, res, next) {
 
   let senc = '' ;
-  await aqtdb.query("select tenv from tmaster where code = ? limit 1",[req.body.tcode])
+  let db_tmpdir = '/tmp'
+  await aqtdb.query("select tenv, variable_value from tmaster, information_schema.global_variables \
+                     where variable_name = 'tmpdir' AND code = ? limit 1",[req.body.tcode])
   .then(rows => {
     if ( rows[0]?.tenv == 'euc-kr') senc = ' charset euckr' ;
+    db_tmpdir = rows[0].variable_value ;
   }) ;
 
   const tfile = 't' + Date.now().toString().substr(-6) + '.csv' ;
 //  const tfilenm =  (process.env.AQTLOG ?? '.' ) + '/' + tfile ;
 // const tfilenm =  path.join(__dirname, "../") + tfile ;
 //  const tfilenm =  "/tmp/" + tfile ;
-  const tfilenm =  "f:/MARIADB/data/"  + tfile ; 
+  const tfilenm =   path.join(db_tmpdir  , tfile) ; 
   let etcond = '';
   if (req.body.uri) etcond = 'and (t.uri = \'' + req.body.uri + '\') ' ;
   if (req.body.rcode) etcond = 'and (t.rcode = ' + req.body.rcode + ') ' ;
@@ -35,7 +38,7 @@ router.post('/', async function(req, res, next) {
 
 //      console.log(str_qry, etcond,  tfilenm ) ;
 
-  const fff = __dirname + '/' + tfile ;
+  const fff =  path.join( __dirname , tfile );
 
   aqtdb.query({dateStrings:true, 
                sql: str_qry  }, [ req.body.tcode,req.body.apps,  tfilenm ])

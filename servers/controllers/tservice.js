@@ -9,6 +9,14 @@ router.get('/', function (req, res, next) {
     .catch((e) => { return next(e) });
 });
 
+router.post('/part', function (req, res, next) {
+  aqtdb.query({ rowsAsArray: true, 
+                sql: "SELECT '' , pkey, appid, svcid,  svckor, svceng, task, manager, svckind FROM tservice a \
+                      where appid rlike ? and svcid rlike ?" },[req.body.apid, req.body.svcid])
+    .then(rows => res.json(rows))
+    .catch((e) => { return next(e) });
+});
+
 router.post('/', async function (req, res, next) {
   let msg = {message:''} ;
   let qstr = 'REPLACE INTO tservice ' +

@@ -1,7 +1,7 @@
 <script>
   import { authApps } from "../aqtstore.js";
   import { onMount } from "svelte";
-  import { getLvlnm} from "./Common.svelte";
+  import { getLvlnm } from "./Common.svelte";
   import Trtable from "./Trtable.svelte";
   import Modal,{getModal} from './Modal.svelte';
 

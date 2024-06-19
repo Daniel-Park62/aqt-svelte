@@ -16,6 +16,10 @@
     "담당자",
     "서비스종류",
   ];
+  const conds = {
+    apid : '',
+    svcid : ''
+  };
 
   function insService() {
     const inss = newRow.slice(2);
@@ -93,7 +97,14 @@
       });
   }
   async function getdata() {
-    const res = await fetch("/tservice");
+//    const res = await fetch("/tservice");
+const res = await fetch("/tservice/part", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(conds),
+    });
     if (res.status === 200) {
       rdata = await res.json();
     } else {
@@ -101,7 +112,7 @@
     }
   }
 
-  onMount(getdata);
+//  onMount(getdata);
 </script>
 
 <div id="btns" style="display:flex; justify-content: flex-start; ">
@@ -109,6 +120,9 @@
   <button on:click={delService}>선택삭제</button>
   <button on:click={updService}>적용</button>
   <button on:click={getdata}>적용취소</button>
+  <span>APID : <input type="text" bind:value={conds.apid} /></span>
+  <span>서비스(URI) : <input type="text" bind:value={conds.svcid} /></span>
+  <button style="margin-left: auto" on:click={getdata}>조회</button>
 </div>
 <hr />
 <div class="tList">
@@ -187,7 +201,10 @@
     background-color: var(--th_bgcolor);
     color: var(--th_color);
   }
-
+  #btns * {
+    margin: 2px 8px;
+    height: 1.7em;
+  }  
   /* tbody tr:nth-child(odd) td {
 	background-color: #fafbff;
 } */

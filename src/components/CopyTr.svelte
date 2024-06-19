@@ -46,11 +46,11 @@
   }
 
   onMount(async () => {
-    if (tlist.length == 0) {
-    const res = await fetch( "/tmaster/tsellist/"+$userid ) ;
-    tlist = await res.json(); 
-    }
-    conds.dstcode =  tlist[0].code ;
+  //   if (tlist.length == 0) {
+  //   const res = await fetch( "/tmaster/tsellist/"+$userid ) ;
+  //   tlist = await res.json(); 
+  //   }
+  //  conds.dstcode =  tlist[0].code ;
     const reso = await fetch( "/tmaster/torglist" ) ;
     tlist_org = await reso.json(); 
     tlist_org.push({tcode:'%',sdate:'ALL'});
