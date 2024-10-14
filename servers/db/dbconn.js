@@ -11,7 +11,8 @@ const pool = mariadb.createPool({
       dateStrings : 'date' ,
       bigIntAsNumber: true,
       insertIdAsNumber : true,
-      decimalAsNumber : true
+      decimalAsNumber : true,
+      multipleStatements:true
 }) ;
 
 module.exports = pool ;

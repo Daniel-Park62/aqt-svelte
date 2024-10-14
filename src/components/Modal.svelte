@@ -64,7 +64,7 @@ onDestroy(()=>{
 	
 </script>
 
-<div id="topModal" class:visible bind:this={topDiv} on:click={()=>close()}>
+<div id="topModal" class:visible bind:this={topDiv} >
 	<div id='modal' style='--w:{w};--h:{h} ' on:click|stopPropagation={()=>{}}>
 		<svg id="close" on:click={()=> close()} viewBox="0 0 12 12">
 			<circle cx=6 cy=6 r=6 />
@@ -93,7 +93,8 @@ onDestroy(()=>{
 	}
 	#modal {
 		position: relative;
-    height: calc(var(--h) * 1%);
+    /* height: calc(var(--h) * 1%); */
+		height : auto;
     width : calc(var(--w) * 1%);
 		border-radius: 6px;
 		background: white;

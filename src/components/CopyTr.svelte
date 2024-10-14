@@ -59,8 +59,7 @@
   });
 
 </script>
-
-
+  
 <h2>테스트데이터 생성</h2>
 <div class="items">
   <span class="in_label">원본:</span><span>
@@ -77,9 +76,10 @@
       {/each}
     </select>
   </span>
+  <!-- svelte-ignore a11y-label-has-associated-control -->
   <label class="item in_label">URI or 서비스:</label><input class="item in_value" bind:value={conds.uri}/>
   <div class="item in_label">서비스별 건수:</div><input class="item in_value" type="number" bind:value={conds.cnt}/>
-  <div class="item in_label">기타조건:</div><input class="item in_value" bind:value={conds.cond}/>
+  <div class="item in_label">기타조건:</div><textarea rows="3" class="item in_value" style="grid-column: 2 / span 2;" bind:value={conds.cond}/>
 </div>
 <p>** 작업정보 **</p>
 <p> {rmsg}</p>
@@ -97,6 +97,7 @@
     align-content: start; 
     background-color:rgb(160, 185, 187);
     padding: 0.5em;
+    min-height: auto;
   }
 
   .item {

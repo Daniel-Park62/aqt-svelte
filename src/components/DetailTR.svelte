@@ -1,5 +1,5 @@
 <script>
- import { authApps, userid } from "../aqtstore.js";
+ import { isLogged, userid } from "../aqtstore.js";
   export let vid = "none";
   export let pid = 0;
 
@@ -37,6 +37,7 @@
 
   async function getDetail(pid) {
     const array = new Uint32Array(1);
+    // console.log("isLogged:", $isLogged);
     const nnn = window.crypto.getRandomValues(array)[0] ;
     const res = await fetch("/trlist/" + pid + `?v=${nnn}`);
     return await res.json();
@@ -51,7 +52,7 @@
     }
     odata.ok = false;
     if (document.getElementById("odata").style.display == "block")
-      getOrig(cdata[0].cmpid);
+      getOrig(cdata[0]);
   }
 
   async function getPrev(pid) {
@@ -63,7 +64,7 @@
     }
     odata.ok = false;
     if (document.getElementById("odata").style.display == "block")
-      getOrig(cdata[0].cmpid);
+      getOrig(cdata[0]);
   }
 
   function closedtl() {
@@ -71,21 +72,33 @@
     // modal = null ;
   }
 
-  async function viewOrig(pid) {
+  async function viewOrig(row) {
     if (odata.display == "none") {
       odata.display = "block";
       odata.ok = false ;
-      await getOrig(pid);
+      await getOrig(row);
     } else {
       odata.display = "none";
     }
     document.getElementById("odata").style.display = odata.display;
   }
 
-  async function getOrig(pid) {
+  async function getOrig(qdata) {
     let rows;
     if (!odata.ok) {
-      const res = await fetch("/trlist/orig/" + pid + "/");
+      const res = await fetch("/trlist/orig" ,
+      { method: "POST" ,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ 
+          'id': qdata.cmpid,
+          'enc': qdata.tenv == 'euc-kr' ? 'charset euckr':'',
+          'tcode':qdata.tcode,
+          $userid
+        })
+      });
+    
       if (res.ok) rows = await res.json();
       else {
         const err = await res.json();
@@ -160,12 +173,12 @@
           <span class="title">{" 전문ID : " + rows[0].cmpid} </span>
           <nav>
             <button on:click={async () => reSend(rows[0])}>재전송</button>
-            <button on:click={async () => getDetail(rows[0].pkey)}>새로고침</button>
+            <button on:click={async () => { cdata = getDetail(rows[0].pkey)}}>새로고침</button>
             <button on:click={async () => getNext(rows[0].pkey)}>다음</button>
             <button on:click={async () => getPrev(rows[0].pkey)}>이전</button>
             <button
               on:click={async () => {
-                viewOrig(rows[0].cmpid);
+                viewOrig(rows[0]);
               }}>원본보기</button
             >
             <button on:click={closedtl}>Close</button>
@@ -178,19 +191,19 @@
               <div class="ny2">
                 <table>
                   <tr>
-                    <td class="lbl">테스트ID</td><td>{row.tcode}</td>
-                    <td class="lbl">ID</td><td>{row.pkey}</td>
+                    <td class="lbl">테스트ID</td><td>{rows[0].tcode}</td>
+                    <td class="lbl">ID</td><td>{rows[0].pkey}</td>
                     <td class="lbl">Source</td><td
-                      >{row.srcip + ":" + row.srcport}</td
+                      >{rows[0].srcip + ":" + rows[0].srcport}</td
                     >
                   </tr>
                   <tr>
                     <td class="lbl">송수신</td><td
-                      >{row.stime + " ~ " + row.rtime.substring(11)}</td
+                      >{rows[0].stime + " ~ " + rows[0].rtime.substring(11)}</td
                     >
-                    <td class="lbl">소요시간</td><td>{row.svctime}</td>
+                    <td class="lbl">소요시간</td><td>{rows[0].svctime}</td>
                     <td class="lbl">Destination</td>
-                    <td>{row.dstip + ":" + row.dstport}</td
+                    <td>{rows[0].dstip + ":" + rows[0].dstport}</td
                     >
                   </tr>
                   <!-- <tr>
@@ -203,21 +216,23 @@
               </div>
               <div class="ny3">
                 <br /><span
-                  >{"송신데이터 : " + row.slen.toLocaleString("ko-KR")}
+                  >{"송신데이터 : " + rows[0].slen.toLocaleString("ko-KR")}
                 </span>
+                {#if $isLogged == 2}
                 <button on:click={ () => trChange(rows[0])}>송신저장</button>
                 <button on:click={ () => trRedo(rows[0])}>송신원복</button>
+                {/if}
                  <br />
-                <textarea rows="8" cols="120" bind:value={row.sdata} />
+                <textarea  rows="8" cols="120" bind:value={row.sdata} />
               </div>
               <div class="ny3">
                 <span>수신헤더</span> <br />
-                <textarea readonly rows="5">{row.rhead}</textarea>
+                <textarea readonly rows="5">{rows[0].rhead}</textarea>
               </div>
               <div class="ny3">
-                <span>{"수신데이터 : " + row.rlen.toLocaleString("ko-KR")}</span
+                <span>{"수신데이터 : " + rows[0].rlen.toLocaleString("ko-KR")}</span
                 ><br />
-                <textarea readonly rows="8" cols="120">{row.rdata.toString()}</textarea>
+                <textarea readonly rows="8" cols="120">{rows[0].rdata.toString()}</textarea>
               </div>
             </div>
           {/each}
@@ -271,6 +286,8 @@
           </div>
         </div>
       {/if}
+    {:catch err}
+        <p style="color: red">{err.message}</p>
     {/await}
   </div>
 </div>

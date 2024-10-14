@@ -8,9 +8,10 @@
 	import TrList from "./components/TrList.svelte";
 	import TexecJob from "./components/TexecJob.svelte";
 	import LoginComp from "./components/LoginComp.svelte";
-	import { isLogged, authApps } from "./aqtstore";
+	import { isLogged, userid } from "./aqtstore";
   import RegService from "./components/RegService.svelte";
   import RegUser from "./components/RegUser.svelte";
+  import RegConfig from "./components/RegConfig.svelte";
 	// onMount(async () => {
 	// 	const res = await fetch("/dashboard/testPassword");
 	// 	const row = await res.json();
@@ -28,11 +29,12 @@
 	];
 
 	let mitems2 = [
-		{ nm: "1. App 등록", url: "regapp", cnm: RegApp },
-		{ nm: "2. 사용자 등록", url: "regUser", cnm: RegUser },
-		{ nm: "3. 서비스 등록", url: "regService", cnm: RegService },
-		{ nm: "3. 테스트등록/전문생성", url: "regtcode", cnm: RegTcode },
-		{ nm: "4. 테스트 실행", url: "texecjob", cnm: TexecJob },
+		{ nm: "▷ 기초정보", url: "regConfig", cnm: RegConfig },
+		{ nm: "▷ App 등록", url: "regapp", cnm: RegApp },
+		{ nm: "▷ 사용자 등록", url: "regUser", cnm: RegUser },
+		{ nm: "▷ 서비스 등록", url: "regService", cnm: RegService },
+		{ nm: "▷ 테스트등록/전문생성", url: "regtcode", cnm: RegTcode },
+		{ nm: "▷ 테스트 실행", url: "texecjob", cnm: TexecJob },
 	];
 	$: chklabel = boxChecked ? "▶" : "◀";
 	let boxChecked = false;

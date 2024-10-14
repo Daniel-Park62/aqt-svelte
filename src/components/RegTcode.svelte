@@ -156,7 +156,7 @@
         (curRow.endDate = null),
         (curRow.cmpCode = null),
         (curRow.tdate = new Date().toISOString().slice(0, 10));
-      getModal().open(undefined, "50", "60");
+      getModal().open(undefined, "50", "70");
     }}>신규등록</button
   >
   <button on:click={delTcode}>선택삭제</button>

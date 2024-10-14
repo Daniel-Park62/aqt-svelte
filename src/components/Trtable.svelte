@@ -1,7 +1,8 @@
 <script>
-    import { authApps } from "../aqtstore.js";
+  import { authApps } from "../aqtstore.js";
   import { getComparator, formatDate, formatDateTime } from "../helpers.js";
   import DetailTR from "./DetailTR.svelte";
+  import { onMount } from "svelte";
 
   const columns = [
     "ID",
@@ -14,6 +15,8 @@
     "수신데이터",
     "Port",
     "APID",
+    '',
+    '',
   ];
   let vid = "none";
   let pid;
@@ -36,6 +39,14 @@
 
   $: if(conds.tcode > ' ' ) { getTRlist();}
   
+  onMount(async () => {
+    const res = await fetch( "/trlist/config" ) ;
+    const r = await res.json(); 
+    if (r.col1) columns[10] = r.col1 ;
+    if (r.col2) columns[11] = r.col2 ;
+    console.log(r, columns) ;
+    // promise = Promise.resolve(tcodelist) ;
+  });
   async function getTRlist() {
     // console.log("entr ...", conds) ;
     if (conds.tcode == undefined) return Promise.resolve([]);
@@ -183,6 +194,7 @@
             <td class="rhead">{row.수신데이터 === null ? '':row.수신데이터}</td>
             <td class="dstport">{row.dstport}</td>
             <td class="appid">{row.appid}</td>
+            {#if row.col1 }<td class="col1">{row.col1}</td>{/if}
           </tr>
         {/each}
       {:catch err}

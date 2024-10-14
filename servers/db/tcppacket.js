@@ -1,4 +1,4 @@
-const aqtdb = require('./db/dbconn') ;
+const aqtdb = require('./dbconn') ;
  
 function erase(tcode, cond) {
   return new Promise ( (resolve,reject) => {

@@ -21,6 +21,7 @@ const logonchk = require('./controllers/logonchk') ;
 const tuser = require('./controllers/tuser') ;
 const trequest = require('./controllers/trequest') ;
 const tresult = require('./controllers/tresult') ;
+const basicSetup = require('./controllers/basicSetup') ;
 
 app.use(cors());
 
@@ -43,6 +44,7 @@ app.use('/texecjob', texecjob) ;
 app.use('/tuser', tuser) ;
 app.use('/trequest', trequest) ;
 app.use('/tresult', tresult) ;
+app.use('/aqtSetup', basicSetup) ;
 
 app.listen(port,'0.0.0.0', () => {
    console.log(`Server is up at port ${port}`);
@@ -50,7 +52,6 @@ app.listen(port,'0.0.0.0', () => {
 
 app.use(notFound);
 app.use(errorHandler);
-
 
 // (async () => {
 //   const conn = await aqtdb.getConn() ;
